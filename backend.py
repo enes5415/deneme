@@ -26,19 +26,26 @@ def _get_ua() -> str:
 
 
 def _ig_headers():
-    """Instagram web endpoint'i için header + cookie (şifresiz)."""
-    if not IG_SESSIONID:
+    sid = _get_sessionid()
+    if not sid:
         raise RuntimeError("IG_SESSIONID yok. Render Environment'a ekleyin.")
     return {
-        "User-Agent": UA,
+        "User-Agent": _get_ua(),
         "Referer": "https://www.instagram.com/",
-        "Cookie": f"sessionid={IG_SESSIONID};"
+        "Origin": "https://www.instagram.com",
+        "Accept": "*/*",
+        "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
+        "X-Requested-With": "XMLHttpRequest",
+        "X-IG-App-ID": "936619743392459",
+        "Cookie": f"sessionid={sid};"
     }
+
 
 @app.get("/")
 def root():
-    # Sağlık kontrolü için basit yanıt
-    return {"status": "ok", "has_session": bool(IG_SESSIONID)}
+    sid = _get_sessionid()
+    return {"status": "ok", "has_session": bool(sid), "ua_set": bool(_get_ua())}
+
 
 @app.get("/analyze")
 def analyze(username: str = Query(...), limit: int = 60):
