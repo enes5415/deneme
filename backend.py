@@ -14,14 +14,16 @@ app.add_middleware(
 )
 
 # Tarayıcıdan kopyaladığın sessionid'i Render Environment'a IG_SESSIONID olarak kaydettik
-IG_SESSIONID = os.getenv("IG_SESSIONID", "").strip()
+def _get_sessionid() -> str:
+    return os.getenv("IG_SESSIONID", "").strip()
 
-# (Opsiyonel) User-Agent; yoksa makul bir UA set ediyoruz
-UA = os.getenv(
-    "IG_USER_AGENT",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"
-)
+def _get_ua() -> str:
+    ua = os.getenv("IG_USER_AGENT", "").strip()
+    if not ua:
+        ua = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
+    return ua
+
 
 def _ig_headers():
     """Instagram web endpoint'i için header + cookie (şifresiz)."""
