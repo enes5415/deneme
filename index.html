@@ -5,23 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>xSocialLab — Sosyal Medya Ajansı</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --lime:    #CDEB00;
-      --lime-dim: rgba(205,235,0,0.12);
-      --lime-glow: rgba(205,235,0,0.25);
-      --black:   #080808;
-      --surface: #111111;
-      --surface2: #181818;
-      --border:  rgba(255,255,255,0.08);
-      --border-lime: rgba(205,235,0,0.3);
-      --text:    #F0EDE8;
-      --muted:   #888880;
-      --radius:  14px;
+      --lime:   #CDEB00;
+      --black:  #080808;
+      --dark:   #0e0e0e;
+      --dark2:  #141414;
+      --border: rgba(255,255,255,0.07);
+      --text:   #EFEFEF;
+      --muted:  #666;
+      --muted2: #999;
     }
 
     html { scroll-behavior: smooth; }
@@ -30,1182 +27,1043 @@
       background: var(--black);
       color: var(--text);
       overflow-x: hidden;
+      cursor: none;
     }
 
-    /* ─── CURSOR GLOW ─── */
-    .cursor-glow {
-      position: fixed;
-      width: 400px; height: 400px;
+    /* ── CUSTOM CURSOR ── */
+    .cursor {
+      position: fixed; z-index: 9999;
+      width: 10px; height: 10px;
+      background: var(--lime);
       border-radius: 50%;
       pointer-events: none;
-      z-index: 0;
-      background: radial-gradient(circle, rgba(205,235,0,0.06) 0%, transparent 70%);
       transform: translate(-50%, -50%);
-      transition: left 0.4s ease, top 0.4s ease;
+      transition: transform 0.08s, width 0.25s, height 0.25s, opacity 0.25s;
+      mix-blend-mode: difference;
     }
+    .cursor-ring {
+      position: fixed; z-index: 9998;
+      width: 40px; height: 40px;
+      border: 1.5px solid rgba(205,235,0,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.25s, height 0.25s, opacity 0.25s;
+    }
+    body:hover .cursor { opacity: 1; }
+    a:hover ~ .cursor, button:hover ~ .cursor { width: 20px; height: 20px; }
 
-    /* ─── NAV ─── */
+    /* ── NAV ── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 48px; height: 72px;
-      background: rgba(8,8,8,0.85);
-      backdrop-filter: blur(24px);
+      padding: 0 56px; height: 76px;
+      transition: background 0.4s, border-color 0.4s, height 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
+      height: 64px;
     }
 
-    .logo {
+    .nav-logo {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 20px; font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--text);
+      font-size: 19px; font-weight: 700; letter-spacing: -0.5px;
+      color: var(--text); text-decoration: none;
     }
-    .logo span { color: var(--lime); }
+    .nav-logo span { color: var(--lime); }
 
-    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links {
+      display: flex; align-items: center; gap: 36px; list-style: none;
+    }
     .nav-links a {
-      color: var(--muted); font-size: 14px; font-weight: 500;
-      text-decoration: none; transition: color .2s;
+      font-size: 13px; font-weight: 500; letter-spacing: 0.2px;
+      color: var(--muted2); text-decoration: none;
+      transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--text); }
 
-    .nav-cta {
+    .nav-btn {
       background: var(--lime); color: var(--black);
-      padding: 11px 24px; border-radius: 8px;
-      font-size: 14px; font-weight: 700;
-      text-decoration: none; transition: opacity .2s;
+      padding: 10px 22px; border-radius: 6px;
+      font-size: 13px; font-weight: 700;
+      text-decoration: none; transition: opacity 0.2s;
     }
-    .nav-cta:hover { opacity: 0.85; }
+    .nav-btn:hover { opacity: 0.85; }
 
-    /* ─── HERO ─── */
+    /* ── HERO ── */
     .hero {
-      min-height: 100vh;
+      height: 100vh; min-height: 700px;
       display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center;
-      padding: 120px 24px 80px;
+      justify-content: flex-end;
+      padding: 0 56px 72px;
       position: relative; overflow: hidden;
     }
 
-    /* Grid lines */
-    .hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(205,235,0,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(205,235,0,0.03) 1px, transparent 1px);
-      background-size: 80px 80px;
-      mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 20%, transparent 100%);
-    }
-
-    /* Top glow */
-    .hero::after {
-      content: '';
-      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
-      width: 700px; height: 500px;
-      background: radial-gradient(ellipse, rgba(205,235,0,0.18) 0%, transparent 65%);
+    .hero-bg-text {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(120px, 20vw, 280px);
+      font-weight: 700; letter-spacing: -8px;
+      color: rgba(255,255,255,0.025);
+      white-space: nowrap;
       pointer-events: none;
-      animation: breathe 6s ease-in-out infinite;
-    }
-
-    @keyframes breathe {
-      0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
-      50%       { opacity: 1;   transform: translateX(-50%) scale(1.1); }
+      user-select: none;
+      line-height: 1;
     }
 
     .hero-eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--lime-dim); border: 1px solid var(--border-lime);
-      padding: 8px 18px; border-radius: 100px;
-      font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
-      text-transform: uppercase; color: var(--lime);
-      margin-bottom: 32px;
-      animation: fadeUp .7s ease both;
-      position: relative; z-index: 1;
-    }
-
-    .hero-eyebrow-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--lime);
-      animation: blink 2s ease infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
-    }
-
-    h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(52px, 8vw, 108px);
-      font-weight: 700;
-      line-height: 1.0;
-      letter-spacing: -3px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--muted2);
       margin-bottom: 28px;
-      position: relative; z-index: 1;
-      animation: fadeUp .7s ease .1s both;
+      animation: fadeUp 0.9s ease both;
+    }
+    .hero-eyebrow::before {
+      content: ''; width: 28px; height: 1px; background: var(--lime);
     }
 
-    h1 em {
-      color: var(--lime);
-      font-style: normal;
-      position: relative;
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(56px, 9vw, 120px);
+      font-weight: 700; line-height: 0.95;
+      letter-spacing: -4px;
+      margin-bottom: 40px;
+      animation: fadeUp 0.9s ease 0.1s both;
     }
+    .hero h1 .outline {
+      -webkit-text-stroke: 1.5px var(--text);
+      color: transparent;
+    }
+    .hero h1 .lime { color: var(--lime); }
 
-    h1 em::after {
-      content: '';
-      position: absolute; left: 0; bottom: -4px; width: 100%; height: 3px;
-      background: var(--lime); border-radius: 2px;
-      opacity: 0.6;
+    .hero-bottom {
+      display: flex; align-items: flex-end;
+      justify-content: space-between;
+      animation: fadeUp 0.9s ease 0.2s both;
     }
 
     .hero-sub {
-      font-size: clamp(17px, 2vw, 21px);
-      color: var(--muted); line-height: 1.7;
-      max-width: 600px;
-      margin-bottom: 48px;
-      position: relative; z-index: 1;
-      animation: fadeUp .7s ease .2s both;
+      font-size: 15px; color: var(--muted2); line-height: 1.75;
+      max-width: 380px;
     }
 
     .hero-actions {
-      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
-      position: relative; z-index: 1;
-      animation: fadeUp .7s ease .3s both;
+      display: flex; align-items: center; gap: 20px;
     }
 
-    .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 16px 36px; border-radius: 10px;
-      font-size: 16px; font-weight: 700; text-decoration: none;
-      transition: transform .2s, box-shadow .2s, opacity .2s;
-    }
-
-    .btn-lime {
+    .btn-main {
       background: var(--lime); color: var(--black);
-      box-shadow: 0 0 40px rgba(205,235,0,0.3);
-    }
-    .btn-lime:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 60px rgba(205,235,0,0.5);
-    }
-
-    .btn-ghost {
-      background: transparent; color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover {
-      border-color: var(--border-lime);
-      background: var(--lime-dim);
-    }
-
-    /* Scroll indicator */
-    .scroll-hint {
-      position: absolute; bottom: 40px; left: 50%;
-      transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-      color: var(--muted); font-size: 12px; letter-spacing: 1px;
-      text-transform: uppercase;
-      animation: fadeIn 1s ease 1s both;
-    }
-
-    .scroll-line {
-      width: 1px; height: 40px;
-      background: linear-gradient(var(--muted), transparent);
-      animation: scrollPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes scrollPulse {
-      0%, 100% { opacity: 0.4; } 50% { opacity: 1; }
-    }
-
-    /* ─── TICKER ─── */
-    .ticker {
-      background: var(--lime); overflow: hidden;
-      padding: 14px 0;
-    }
-
-    .ticker-track {
-      display: flex; gap: 0;
-      animation: ticker 30s linear infinite;
-      width: max-content;
-    }
-
-    .ticker-item {
-      display: flex; align-items: center; gap: 16px;
-      padding: 0 32px;
-      font-family: 'Space Grotesk', sans-serif;
+      padding: 16px 32px; border-radius: 6px;
       font-size: 14px; font-weight: 700;
-      color: var(--black); text-transform: uppercase; letter-spacing: 1px;
-      white-space: nowrap;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-main:hover { opacity: 0.88; transform: translateY(-2px); }
+
+    .btn-text {
+      font-size: 13px; font-weight: 600; color: var(--muted2);
+      text-decoration: none; display: flex; align-items: center; gap: 8px;
+      transition: color 0.2s;
+    }
+    .btn-text:hover { color: var(--text); }
+    .btn-text::after {
+      content: '↗'; font-size: 15px;
     }
 
-    .ticker-sep { opacity: 0.4; font-size: 20px; }
-
-    @keyframes ticker {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+    .hero-scroll {
+      position: absolute; bottom: 40px; right: 56px;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      color: var(--muted); font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase;
+      animation: fadeIn 1.2s ease 0.6s both;
+    }
+    .hero-scroll-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(var(--muted), transparent);
+      animation: scrollDown 2s ease-in-out infinite;
+    }
+    @keyframes scrollDown {
+      0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
+      50%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
     }
 
-    /* ─── SECTION COMMONS ─── */
-    section { padding: 120px 24px; position: relative; }
-
-    .container { max-width: 1200px; margin: 0 auto; }
-
-    .section-tag {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--lime-dim); border: 1px solid var(--border-lime);
-      padding: 6px 14px; border-radius: 100px;
-      font-size: 11px; font-weight: 700; letter-spacing: 1.8px;
-      text-transform: uppercase; color: var(--lime);
-      margin-bottom: 20px;
-    }
-
-    .section-tag::before {
-      content: ''; width: 5px; height: 5px;
-      background: var(--lime); border-radius: 50%;
-    }
-
-    h2 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(36px, 5vw, 62px);
-      font-weight: 700; letter-spacing: -2px; line-height: 1.05;
-      margin-bottom: 16px;
-    }
-
-    h2 .lime { color: var(--lime); }
-
-    .lead {
-      font-size: 18px; color: var(--muted); line-height: 1.7;
-      max-width: 500px;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(28px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; } to { opacity: 1; }
-    }
-
-    .reveal {
-      opacity: 0; transform: translateY(36px);
-      transition: opacity .8s ease, transform .8s ease;
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    .reveal-delay-1 { transition-delay: .1s; }
-    .reveal-delay-2 { transition-delay: .2s; }
-    .reveal-delay-3 { transition-delay: .3s; }
-    .reveal-delay-4 { transition-delay: .4s; }
-
-    /* ─── STATS BAR ─── */
-    #stats {
-      padding: 80px 24px;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      divide-x: 1px solid var(--border);
-    }
-
-    .stat-item {
-      padding: 0 48px;
-      border-right: 1px solid var(--border);
-      text-align: center;
-    }
-    .stat-item:first-child { padding-left: 0; }
-    .stat-item:last-child  { border-right: none; padding-right: 0; }
-
-    .stat-num {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 56px; font-weight: 700;
-      line-height: 1; color: var(--lime);
-      letter-spacing: -2px;
-    }
-
-    .stat-label {
-      color: var(--muted); font-size: 14px;
-      margin-top: 8px; font-weight: 500;
-    }
-
-    /* ─── SERVICES ─── */
-    #services { background: var(--black); }
-
-    .services-header {
-      display: flex; justify-content: space-between;
-      align-items: flex-end; margin-bottom: 64px;
-      flex-wrap: wrap; gap: 24px;
-    }
-
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 20px; overflow: hidden;
-    }
-
-    .service-card {
-      background: var(--surface);
-      padding: 52px 48px;
-      position: relative; overflow: hidden;
-      transition: background .3s;
-      cursor: default;
-    }
-
-    .service-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--lime), transparent);
-      transform: scaleX(0);
-      transition: transform .4s ease;
-    }
-
-    .service-card:hover { background: var(--surface2); }
-    .service-card:hover::before { transform: scaleX(1); }
-
-    .service-num {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 13px; font-weight: 700;
-      color: var(--lime); letter-spacing: 2px;
-      margin-bottom: 32px;
-      opacity: 0.7;
-    }
-
-    .service-icon-wrap {
-      width: 60px; height: 60px; border-radius: 14px;
-      background: var(--lime-dim); border: 1px solid var(--border-lime);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px; margin-bottom: 28px;
-      transition: background .3s, transform .3s;
-    }
-
-    .service-card:hover .service-icon-wrap {
-      background: rgba(205,235,0,0.2);
-      transform: scale(1.05);
-    }
-
-    .service-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 24px; font-weight: 700;
-      letter-spacing: -0.5px; margin-bottom: 16px;
-    }
-
-    .service-desc {
-      color: var(--muted); font-size: 15px; line-height: 1.75;
-      margin-bottom: 32px;
-    }
-
-    .service-tags {
-      display: flex; flex-wrap: wrap; gap: 8px;
-    }
-
-    .tag {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      padding: 5px 12px; border-radius: 100px;
-      font-size: 12px; color: var(--muted); font-weight: 500;
-    }
-
-    /* ─── HOW WE WORK ─── */
-    #how { background: var(--surface); }
-
-    .how-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px; align-items: center;
-    }
-
-    .how-steps {
-      display: flex; flex-direction: column; gap: 0;
-    }
-
-    .how-step {
-      display: flex; gap: 28px;
-      padding: 32px 0;
-      border-bottom: 1px solid var(--border);
-      transition: padding .3s;
-      cursor: default;
-    }
-    .how-step:first-child { padding-top: 0; }
-    .how-step:last-child  { border-bottom: none; padding-bottom: 0; }
-    .how-step:hover { padding-left: 8px; }
-
-    .step-badge {
-      width: 48px; height: 48px; border-radius: 12px;
-      background: var(--lime-dim); border: 1px solid var(--border-lime);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 15px; font-weight: 700; color: var(--lime);
-      flex-shrink: 0;
-    }
-
-    .step-body h4 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 18px; font-weight: 600; margin-bottom: 6px;
-    }
-
-    .step-body p {
-      color: var(--muted); font-size: 14px; line-height: 1.7;
-    }
-
-    .how-visual {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 20px; padding: 48px;
-      display: flex; flex-direction: column; gap: 20px;
-    }
-
-    .metric-row {
-      display: flex; flex-direction: column; gap: 8px;
-    }
-
-    .metric-header {
-      display: flex; justify-content: space-between; align-items: center;
-    }
-
-    .metric-name { font-size: 13px; font-weight: 600; color: var(--text); }
-    .metric-val  { font-size: 13px; font-weight: 700; color: var(--lime); }
-
-    .metric-bar {
-      height: 6px; background: rgba(255,255,255,0.06);
-      border-radius: 100px; overflow: hidden;
-    }
-
-    .metric-fill {
-      height: 100%; border-radius: 100px;
-      background: linear-gradient(90deg, var(--lime), rgba(205,235,0,0.6));
-      animation: fillBar 1.6s cubic-bezier(.4,0,.2,1) both;
-    }
-
-    @keyframes fillBar {
-      from { width: 0; }
-    }
-
-    .metric-fill.delay1 { animation-delay: .2s; }
-    .metric-fill.delay2 { animation-delay: .4s; }
-    .metric-fill.delay3 { animation-delay: .6s; }
-    .metric-fill.delay4 { animation-delay: .8s; }
-
-    .visual-caption {
-      font-size: 12px; color: var(--muted);
-      text-align: center; margin-top: 8px;
-    }
-
-    /* ─── REFERANSLAR ─── */
-    #referanslar { background: var(--black); }
-
-    .ref-header {
-      display: flex; justify-content: space-between;
-      align-items: flex-end; margin-bottom: 64px;
-      flex-wrap: wrap; gap: 24px;
-    }
-
-    .ref-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .ref-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 18px; padding: 36px;
-      transition: border-color .3s, transform .3s;
-      position: relative; overflow: hidden;
-    }
-
-    .ref-card::after {
-      content: '\201C';
-      position: absolute; top: 16px; right: 24px;
-      font-size: 80px; color: var(--lime);
-      opacity: 0.08; font-family: Georgia, serif;
-      line-height: 1; pointer-events: none;
-    }
-
-    .ref-card:hover {
-      border-color: var(--border-lime);
-      transform: translateY(-4px);
-    }
-
-    .ref-stars {
-      display: flex; gap: 3px; margin-bottom: 20px;
-    }
-
-    .star { color: var(--lime); font-size: 14px; }
-
-    .ref-text {
-      color: #C8C4BE; font-size: 15px; line-height: 1.8;
-      margin-bottom: 28px; font-style: italic;
-    }
-
-    .ref-author {
-      display: flex; align-items: center; gap: 14px;
-    }
-
-    .ref-avatar {
-      width: 46px; height: 46px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 15px; flex-shrink: 0;
-    }
-
-    .av-a { background: var(--lime); color: var(--black); }
-    .av-b { background: #1a1a1a; border: 2px solid var(--lime); color: var(--lime); }
-    .av-c { background: #222; border: 2px solid rgba(205,235,0,0.4); color: var(--text); }
-    .av-d { background: linear-gradient(135deg, var(--lime), #a0b800); color: var(--black); }
-    .av-e { background: #1e1e1e; border: 2px solid rgba(205,235,0,0.3); color: var(--lime); }
-
-    .ref-name { font-weight: 700; font-size: 14px; }
-    .ref-role { color: var(--muted); font-size: 12px; margin-top: 2px; }
-
-    .ref-card.featured {
-      border-color: var(--border-lime);
-      background: linear-gradient(135deg, rgba(205,235,0,0.05) 0%, var(--surface) 60%);
-      grid-column: span 1;
-    }
-
-    /* ─── MARQUEE LOGOS ─── */
-    #brands {
-      padding: 60px 0;
+    /* ── MARQUEE ── */
+    .marquee-section {
+      padding: 24px 0;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       overflow: hidden;
     }
-
-    .brands-label {
-      text-align: center; font-size: 12px; font-weight: 600;
-      letter-spacing: 2px; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 40px;
+    .marquee-track {
+      display: flex; width: max-content;
+      animation: marquee 24s linear infinite;
     }
-
-    .logos-track {
-      display: flex; gap: 0;
-      animation: logoScroll 25s linear infinite;
-      width: max-content;
+    .marquee-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 28px; white-space: nowrap;
+      font-size: 12px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--muted);
     }
-
-    .logo-item {
-      padding: 0 40px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 18px; font-weight: 700;
-      color: rgba(255,255,255,0.2);
-      white-space: nowrap; letter-spacing: -0.5px;
-      transition: color .3s;
-    }
-
-    .logo-item:hover { color: var(--lime); }
-
-    @keyframes logoScroll {
+    .marquee-item .dot { color: var(--lime); font-size: 18px; line-height: 1; }
+    @keyframes marquee {
       0%   { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
 
-    /* ─── CTA ─── */
-    #cta { background: var(--black); padding: 80px 24px 120px; }
+    /* ── HAKKIMIZDA ── */
+    #hakkimizda {
+      padding: 140px 56px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
 
-    .cta-box {
-      max-width: 900px; margin: 0 auto;
-      background: var(--lime);
-      border-radius: 24px; padding: 80px 64px;
+    .about-tag {
+      font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--lime);
+      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .about-tag::before { content: ''; width: 28px; height: 1px; background: var(--lime); }
+
+    #hakkimizda h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 4.5vw, 58px);
+      font-weight: 700; letter-spacing: -2px; line-height: 1.05;
+    }
+    #hakkimizda h2 em { font-style: normal; color: var(--lime); }
+
+    .about-right {
+      display: flex; flex-direction: column; gap: 32px;
+    }
+
+    .about-text {
+      font-size: 16px; color: var(--muted2); line-height: 1.8;
+    }
+
+    .about-stats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    }
+
+    .about-stat {
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .about-stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 44px; font-weight: 700;
+      color: var(--lime); letter-spacing: -2px; line-height: 1;
+    }
+    .about-stat-label {
+      font-size: 13px; color: var(--muted2); margin-top: 6px;
+    }
+
+    /* ── HİZMETLER ── */
+    #hizmetler { padding: 140px 56px; border-bottom: 1px solid var(--border); }
+
+    .section-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 72px; flex-wrap: wrap; gap: 24px;
+    }
+
+    .section-tag {
+      font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--lime);
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .section-tag::before { content: ''; width: 28px; height: 1px; background: var(--lime); }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(36px, 4.5vw, 56px);
+      font-weight: 700; letter-spacing: -2px; line-height: 1.05;
+    }
+    .section-title em { font-style: normal; color: var(--lime); }
+
+    .section-lead {
+      font-size: 15px; color: var(--muted2); line-height: 1.75;
+      max-width: 360px;
+    }
+
+    .services-list { display: flex; flex-direction: column; }
+
+    .service-row {
+      display: grid; grid-template-columns: 80px 1fr 1fr auto;
+      align-items: center; gap: 40px;
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      transition: background 0.3s;
+      cursor: default;
+      position: relative;
+    }
+    .service-row::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(205,235,0,0.02);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .service-row:hover::before { opacity: 1; }
+    .service-row:last-child { border-bottom: 1px solid var(--border); }
+
+    .service-row:hover .service-num { color: var(--lime); }
+    .service-row:hover .service-arrow { color: var(--lime); transform: rotate(45deg); }
+
+    .service-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 700; color: var(--muted);
+      letter-spacing: 1px; transition: color 0.3s;
+    }
+
+    .service-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 700; letter-spacing: -0.5px;
+    }
+
+    .service-tags-row {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .stag {
+      border: 1px solid var(--border);
+      padding: 5px 12px; border-radius: 100px;
+      font-size: 11px; color: var(--muted2); font-weight: 500;
+    }
+
+    .service-arrow {
+      font-size: 22px; color: var(--muted);
+      transition: color 0.3s, transform 0.3s;
+      flex-shrink: 0;
+    }
+
+    /* ── REFERANSLAR / CLIENT LOGOS ── */
+    #referanslar { padding: 140px 56px; border-bottom: 1px solid var(--border); }
+
+    .clients-header { margin-bottom: 72px; }
+
+    .clients-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--muted2);
+      margin-bottom: 40px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .clients-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .logos-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+
+    .logo-cell {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 32px;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 120px;
+      transition: background 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .logo-cell::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(205,235,0,0.04);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .logo-cell:hover::before { opacity: 1; }
+
+    .logo-cell img {
+      max-width: 140px; max-height: 60px;
+      width: auto; height: auto;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: 0.55;
+      transition: opacity 0.3s, filter 0.3s;
+    }
+    .logo-cell:hover img {
+      opacity: 1;
+      filter: brightness(0) invert(1) sepia(1) saturate(10) hue-rotate(25deg);
+    }
+
+    /* Text fallback for logos */
+    .logo-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 700; letter-spacing: 1px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase; text-align: center;
+      transition: color 0.3s;
+    }
+    .logo-cell:hover .logo-text { color: rgba(255,255,255,0.7); }
+
+    /* Testimonials */
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px; margin-top: 72px;
+    }
+
+    .tcard {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 36px;
+      transition: border-color 0.3s;
+    }
+    .tcard:hover { border-color: rgba(205,235,0,0.2); }
+
+    .tcard-quote {
+      font-size: 32px; color: var(--lime); line-height: 1;
+      font-family: Georgia, serif; margin-bottom: 20px; opacity: 0.6;
+    }
+
+    .tcard-text {
+      font-size: 14px; color: var(--muted2); line-height: 1.8;
+      margin-bottom: 28px; font-style: italic;
+    }
+
+    .tcard-author {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .tcard-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--lime); color: var(--black);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px; flex-shrink: 0;
+    }
+    .tcard-name { font-weight: 700; font-size: 14px; }
+    .tcard-role { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ── NASIL ÇALIŞIRIZ ── */
+    #nasil { padding: 140px 56px; border-bottom: 1px solid var(--border); }
+
+    .process-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 2px; background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+      margin-top: 72px;
+    }
+
+    .process-step {
+      background: var(--dark);
+      padding: 48px 36px;
+      transition: background 0.3s;
+    }
+    .process-step:hover { background: var(--dark2); }
+
+    .ps-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 40px; font-weight: 700;
+      color: var(--lime); opacity: 0.25;
+      line-height: 1; margin-bottom: 32px;
+      letter-spacing: -2px;
+    }
+
+    .ps-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px; font-weight: 700;
+      margin-bottom: 14px; letter-spacing: -0.3px;
+    }
+
+    .ps-text {
+      font-size: 13px; color: var(--muted2); line-height: 1.75;
+    }
+
+    /* ── SONUÇLAR ── */
+    #sonuclar {
+      padding: 140px 56px;
+      border-bottom: 1px solid var(--border);
+      background: var(--dark);
+    }
+
+    .results-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 2px; background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+      margin-top: 72px;
+    }
+
+    .result-item {
+      background: var(--dark2);
+      padding: 56px 40px;
+      transition: background 0.3s;
+    }
+    .result-item:hover { background: #1a1a1a; }
+
+    .result-kpi {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(48px, 5vw, 72px);
+      font-weight: 700; color: var(--lime);
+      line-height: 1; letter-spacing: -3px;
+      margin-bottom: 8px;
+    }
+    .result-label { font-size: 14px; color: var(--muted2); margin-bottom: 4px; }
+    .result-brand { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+
+    /* ── CTA ── */
+    #iletisim {
+      padding: 160px 56px;
       text-align: center; position: relative; overflow: hidden;
     }
 
-    .cta-box::before {
+    #iletisim::before {
       content: '';
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(circle at 20% 50%, rgba(255,255,255,0.12) 0%, transparent 50%),
-        radial-gradient(circle at 80% 50%, rgba(0,0,0,0.08) 0%, transparent 50%);
+      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(205,235,0,0.1) 0%, transparent 60%);
+      pointer-events: none;
     }
 
-    .cta-box h2 {
-      font-size: clamp(36px, 5vw, 64px);
-      letter-spacing: -2px;
-      color: var(--black); margin-bottom: 16px;
-      position: relative; z-index: 1;
+    .cta-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--lime);
+      margin-bottom: 28px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .cta-eyebrow::before, .cta-eyebrow::after {
+      content: ''; width: 28px; height: 1px; background: var(--lime);
     }
 
-    .cta-box p {
-      font-size: 18px; color: rgba(0,0,0,0.6);
-      margin-bottom: 44px; line-height: 1.6;
-      position: relative; z-index: 1;
+    #iletisim h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(48px, 8vw, 100px);
+      font-weight: 700; letter-spacing: -4px; line-height: 0.95;
+      margin-bottom: 32px; position: relative; z-index: 1;
+    }
+    #iletisim h2 .outline {
+      -webkit-text-stroke: 1.5px rgba(255,255,255,0.4);
+      color: transparent;
+    }
+    #iletisim h2 .lime { color: var(--lime); }
+
+    #iletisim p {
+      font-size: 16px; color: var(--muted2); line-height: 1.7;
+      max-width: 460px; margin: 0 auto 48px; position: relative; z-index: 1;
     }
 
     .cta-actions {
-      display: flex; gap: 16px; justify-content: center;
-      flex-wrap: wrap; position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      gap: 20px; flex-wrap: wrap; position: relative; z-index: 1;
     }
 
-    .btn-dark {
-      background: var(--black); color: var(--lime);
-      padding: 16px 36px; border-radius: 10px;
+    .btn-big {
+      background: var(--lime); color: var(--black);
+      padding: 20px 44px; border-radius: 8px;
       font-size: 16px; font-weight: 700;
-      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
-      transition: opacity .2s, transform .2s;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      text-decoration: none; display: inline-flex; align-items: center; gap: 12px;
+      transition: opacity 0.2s, transform 0.2s;
     }
+    .btn-big:hover { opacity: 0.88; transform: translateY(-3px); }
 
-    .btn-dark:hover { opacity: 0.85; transform: translateY(-2px); }
-
-    .btn-outline-dark {
-      background: transparent; color: var(--black);
-      padding: 16px 36px; border-radius: 10px;
-      font-size: 16px; font-weight: 700;
-      text-decoration: none; border: 2px solid rgba(0,0,0,0.3);
-      transition: background .2s;
+    .btn-big-ghost {
+      border: 1px solid var(--border);
+      color: var(--text); padding: 20px 44px; border-radius: 8px;
+      font-size: 16px; font-weight: 600;
+      text-decoration: none; transition: border-color 0.2s;
     }
+    .btn-big-ghost:hover { border-color: rgba(205,235,0,0.4); }
 
-    .btn-outline-dark:hover { background: rgba(0,0,0,0.08); }
-
-    /* ─── FOOTER ─── */
+    /* ── FOOTER ── */
     footer {
-      background: var(--surface);
+      background: var(--dark);
       border-top: 1px solid var(--border);
-      padding: 72px 24px 40px;
+      padding: 72px 56px 36px;
     }
 
-    .footer-grid {
-      max-width: 1200px; margin: 0 auto;
-      display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr;
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
       gap: 48px; margin-bottom: 56px;
     }
 
-    .footer-brand .logo {
-      font-size: 22px; display: block; margin-bottom: 14px;
+    .footer-logo-txt {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
+      margin-bottom: 12px; display: block;
+      color: var(--text); text-decoration: none;
     }
+    .footer-logo-txt span { color: var(--lime); }
 
     .footer-desc {
-      color: var(--muted); font-size: 14px; line-height: 1.75;
-      max-width: 280px; margin-bottom: 28px;
+      font-size: 13px; color: var(--muted); line-height: 1.75;
+      max-width: 260px; margin-bottom: 28px;
     }
 
     .footer-socials {
-      display: flex; gap: 12px;
+      display: flex; gap: 10px;
     }
-
-    .social-btn {
-      width: 38px; height: 38px; border-radius: 9px;
+    .fsocial {
+      width: 36px; height: 36px; border-radius: 8px;
       border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      color: var(--muted); text-decoration: none; font-size: 15px;
-      transition: border-color .2s, color .2s, background .2s;
+      color: var(--muted); font-size: 14px; text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
     }
-
-    .social-btn:hover {
-      border-color: var(--lime);
-      color: var(--lime); background: var(--lime-dim);
-    }
+    .fsocial:hover { border-color: var(--lime); color: var(--lime); }
 
     .footer-col h5 {
-      font-size: 11px; font-weight: 700; letter-spacing: 1.8px;
+      font-size: 10px; font-weight: 700; letter-spacing: 2px;
       text-transform: uppercase; color: var(--muted);
       margin-bottom: 20px;
     }
-
     .footer-col a {
-      display: block; color: rgba(240,237,232,0.7);
-      text-decoration: none; font-size: 14px;
-      margin-bottom: 12px; transition: color .2s;
+      display: block; font-size: 13px; color: rgba(239,239,239,0.6);
+      text-decoration: none; margin-bottom: 12px; transition: color 0.2s;
     }
-
     .footer-col a:hover { color: var(--lime); }
 
     .footer-bottom {
-      max-width: 1200px; margin: 0 auto;
       display: flex; justify-content: space-between; align-items: center;
-      border-top: 1px solid var(--border); padding-top: 24px;
+      border-top: 1px solid var(--border); padding-top: 28px;
       flex-wrap: wrap; gap: 12px;
     }
-
-    .footer-bottom p { color: var(--muted); font-size: 13px; }
+    .footer-bottom p { font-size: 12px; color: var(--muted); }
 
     .footer-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      background: var(--lime-dim); border: 1px solid var(--border-lime);
-      padding: 5px 12px; border-radius: 100px;
-      font-size: 12px; font-weight: 600; color: var(--lime);
+      background: rgba(205,235,0,0.08); border: 1px solid rgba(205,235,0,0.2);
+      padding: 5px 14px; border-radius: 100px;
+      font-size: 11px; font-weight: 700; color: var(--lime);
+      letter-spacing: 0.5px;
     }
+    .footer-badge .dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--lime); animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-    /* ─── RESPONSIVE ─── */
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .reveal {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .reveal.d1 { transition-delay: 0.1s; }
+    .reveal.d2 { transition-delay: 0.2s; }
+    .reveal.d3 { transition-delay: 0.3s; }
+    .reveal.d4 { transition-delay: 0.4s; }
+
+    /* ── RESPONSIVE ── */
     @media (max-width: 1024px) {
-      .services-grid { grid-template-columns: 1fr; }
-      .how-grid { grid-template-columns: 1fr; gap: 48px; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
-      .stat-item { border-right: none; border-bottom: 1px solid var(--border); padding: 16px 0; }
-      .stat-item:nth-child(2n) { border-right: none; }
-    }
-
-    @media (max-width: 768px) {
-      nav { padding: 0 20px; }
+      nav { padding: 0 28px; }
       .nav-links { display: none; }
-      .ref-grid { grid-template-columns: 1fr; }
-      .footer-grid { grid-template-columns: 1fr 1fr; }
-      .cta-box { padding: 48px 28px; }
+      .hero { padding: 0 28px 56px; }
+      #hakkimizda { padding: 80px 28px; grid-template-columns: 1fr; gap: 48px; }
+      #hizmetler, #referanslar, #nasil, #sonuclar, #iletisim { padding: 80px 28px; }
+      footer { padding: 56px 28px 28px; }
+      .service-row { grid-template-columns: 56px 1fr; gap: 20px; }
+      .service-tags-row, .service-arrow { display: none; }
+      .logos-grid { grid-template-columns: repeat(3, 1fr); }
+      .process-grid, .results-grid { grid-template-columns: repeat(2, 1fr); }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
     }
 
-    @media (max-width: 480px) {
-      .footer-grid { grid-template-columns: 1fr; }
-      h1 { letter-spacing: -2px; }
+    @media (max-width: 640px) {
+      .hero h1 { letter-spacing: -2px; }
+      .logos-grid { grid-template-columns: repeat(2, 1fr); }
+      .about-stats { grid-template-columns: 1fr; }
+      .process-grid, .results-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <div class="cursor-glow" id="cursorGlow"></div>
+  <!-- CURSOR -->
+  <div class="cursor" id="cur"></div>
+  <div class="cursor-ring" id="curRing"></div>
 
   <!-- NAV -->
-  <nav>
-    <div class="logo">x<span>Social</span>Lab</div>
+  <nav id="nav">
+    <a href="#" class="nav-logo">x<span>Social</span>Lab</a>
     <ul class="nav-links">
-      <li><a href="#services">Hizmetler</a></li>
-      <li><a href="#how">Nasıl Çalışırız</a></li>
+      <li><a href="#hakkimizda">Hakkımızda</a></li>
+      <li><a href="#hizmetler">Hizmetler</a></li>
       <li><a href="#referanslar">Referanslar</a></li>
-      <li><a href="#cta" class="nav-cta">İletişime Geç</a></li>
+      <li><a href="#nasil">Süreç</a></li>
+      <li><a href="#iletisim" class="nav-btn">İletişim</a></li>
     </ul>
   </nav>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-eyebrow">
-      <span class="hero-eyebrow-dot"></span>
-      Sosyal Medya Ajansı · İstanbul
-    </div>
+    <div class="hero-bg-text" aria-hidden="true">SOSYAL</div>
+
+    <div class="hero-eyebrow">Sosyal Medya Ajansı · İstanbul · Est. 2016</div>
 
     <h1>
-      Markanız<br />
-      <em>Fark Yaratır</em>
+      Markanızı<br />
+      <span class="outline">Büyütmek</span><br />
+      İçin <span class="lime">Burdayız.</span>
     </h1>
 
-    <p class="hero-sub">
-      İçerik üretiminden reklam yönetimine, influencer iş birliklerinden marka stratejisine — sosyal medyanızı büyütmek için burdayız.
-    </p>
-
-    <div class="hero-actions">
-      <a href="#cta" class="btn btn-lime">
-        Ücretsiz Strateji Görüşmesi
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-      <a href="#referanslar" class="btn btn-ghost">Referanslarımız</a>
+    <div class="hero-bottom">
+      <p class="hero-sub">
+        Strateji, içerik üretimi, reklam yönetimi ve influencer marketing — sosyal medyanızı gerçek sonuçlara taşıyoruz.
+      </p>
+      <div class="hero-actions">
+        <a href="#iletisim" class="btn-main">
+          Ücretsiz Görüşme
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="#referanslar" class="btn-text">Çalışmalarımız</a>
+      </div>
     </div>
 
-    <div class="scroll-hint">
+    <div class="hero-scroll">
       <span>Keşfet</span>
-      <div class="scroll-line"></div>
+      <div class="hero-scroll-line"></div>
     </div>
   </section>
 
-  <!-- TICKER -->
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker-track">
-      <!-- double for seamless loop -->
-      <span class="ticker-item">Sosyal Medya Yönetimi <span class="ticker-sep">·</span></span>
-      <span class="ticker-item">İçerik Üretimi <span class="ticker-sep">·</span></span>
-      <span class="ticker-item">Reklam Yönetimi <span class="ticker-sep">·</span></span>
-      <span class="ticker-item">Influencer Marketing <span class="ticker-sep">·</span></span>
-      <span class="ticker-item">Marka Stratejisi <span class="ticker-sep">·</span></span>
-      <span class="ticker-item">Analytics & Raporlama <span class="ticker-sep">·</span></span>
-      <span class="ticker-item">Sosyal Medya Yönetimi <span class="ticker-sep">·</span></span>
-      <span class="ticker-item">İçerik Üretimi <span class="ticker-sep">·</span></span>
-      <span class="ticker-item">Reklam Yönetimi <span class="ticker-sep">·</span></span>
-      <span class="ticker-item">Influencer Marketing <span class="ticker-sep">·</span></span>
-      <span class="ticker-item">Marka Stratejisi <span class="ticker-sep">·</span></span>
-      <span class="ticker-item">Analytics & Raporlama <span class="ticker-sep">·</span></span>
+  <!-- MARQUEE -->
+  <div class="marquee-section" aria-hidden="true">
+    <div class="marquee-track">
+      <span class="marquee-item">Sosyal Medya Yönetimi<span class="dot"> ·</span></span>
+      <span class="marquee-item">İçerik Üretimi<span class="dot"> ·</span></span>
+      <span class="marquee-item">Reklam & Medya<span class="dot"> ·</span></span>
+      <span class="marquee-item">Influencer Marketing<span class="dot"> ·</span></span>
+      <span class="marquee-item">Marka Stratejisi<span class="dot"> ·</span></span>
+      <span class="marquee-item">Analytics & Raporlama<span class="dot"> ·</span></span>
+      <span class="marquee-item">Sosyal Medya Yönetimi<span class="dot"> ·</span></span>
+      <span class="marquee-item">İçerik Üretimi<span class="dot"> ·</span></span>
+      <span class="marquee-item">Reklam & Medya<span class="dot"> ·</span></span>
+      <span class="marquee-item">Influencer Marketing<span class="dot"> ·</span></span>
+      <span class="marquee-item">Marka Stratejisi<span class="dot"> ·</span></span>
+      <span class="marquee-item">Analytics & Raporlama<span class="dot"> ·</span></span>
     </div>
   </div>
 
-  <!-- STATS -->
-  <section id="stats">
-    <div class="container">
-      <div class="stats-grid">
-        <div class="stat-item reveal">
-          <div class="stat-num">150+</div>
-          <div class="stat-label">Mutlu Marka</div>
+  <!-- HAKKIMIZDA -->
+  <section id="hakkimizda">
+    <div>
+      <div class="about-tag reveal">Hakkımızda</div>
+      <h2 class="reveal">Sosyal medyayı<br />işe yarayan bir<br /><em>araca</em> dönüştürüyoruz.</h2>
+    </div>
+    <div class="about-right">
+      <p class="about-text reveal">
+        xSocialLab olarak sosyal medyayı bir içerik kanalı olarak değil, güçlü bir büyüme motoru olarak görüyoruz. 2016'dan bu yana yüzlerce markaya, sahte vaatler değil gerçek verilerle büyüme sağladık.
+      </p>
+      <p class="about-text reveal d1">
+        Her müşteri için özel strateji geliştiriyor, her platformun dinamiğini ayrı ayrı çalıştırıyor ve aylık şeffaf raporlarla her adımı açıklıyoruz.
+      </p>
+      <div class="about-stats">
+        <div class="about-stat reveal d1">
+          <div class="about-stat-num">150+</div>
+          <div class="about-stat-label">Mutlu marka</div>
         </div>
-        <div class="stat-item reveal reveal-delay-1">
-          <div class="stat-num">340%</div>
-          <div class="stat-label">Ortalama ROI Artışı</div>
+        <div class="about-stat reveal d2">
+          <div class="about-stat-num">340%</div>
+          <div class="about-stat-label">Ort. ROI artışı</div>
         </div>
-        <div class="stat-item reveal reveal-delay-2">
-          <div class="stat-num">12M+</div>
-          <div class="stat-label">Aylık Organik Erişim</div>
+        <div class="about-stat reveal d3">
+          <div class="about-stat-num">12M+</div>
+          <div class="about-stat-label">Aylık organik erişim</div>
         </div>
-        <div class="stat-item reveal reveal-delay-3">
-          <div class="stat-num">8 Yıl</div>
-          <div class="stat-label">Sektör Deneyimi</div>
+        <div class="about-stat reveal d4">
+          <div class="about-stat-num">%94</div>
+          <div class="about-stat-label">Sözleşme yenileme oranı</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SERVICES -->
-  <section id="services">
-    <div class="container">
-      <div class="services-header">
-        <div>
-          <div class="section-tag reveal">Hizmetlerimiz</div>
-          <h2 class="reveal">Her ihtiyacınız için<br /><span class="lime">doğru çözüm</span></h2>
-        </div>
-        <p class="lead reveal">Sosyal medyanın tüm boyutlarını kapsayan, sonuç odaklı hizmetler.</p>
+  <!-- HİZMETLER -->
+  <section id="hizmetler">
+    <div class="section-header">
+      <div>
+        <div class="section-tag reveal">Hizmetler</div>
+        <h2 class="section-title reveal">Ne yapıyoruz?</h2>
       </div>
-
-      <div class="services-grid">
-
-        <div class="service-card reveal">
-          <div class="service-num">01</div>
-          <div class="service-icon-wrap">📱</div>
-          <div class="service-title">Sosyal Medya Yönetimi</div>
-          <p class="service-desc">Instagram'dan TikTok'a, LinkedIn'den X'e — tüm platformlarda tutarlı bir marka sesi inşa ediyoruz. İçerik takvimi, topluluk yönetimi ve algoritmayı çalıştıracak strateji dahil.</p>
-          <div class="service-tags">
-            <span class="tag">Instagram</span>
-            <span class="tag">TikTok</span>
-            <span class="tag">LinkedIn</span>
-            <span class="tag">X / Twitter</span>
-            <span class="tag">YouTube</span>
-          </div>
-        </div>
-
-        <div class="service-card reveal reveal-delay-1">
-          <div class="service-num">02</div>
-          <div class="service-icon-wrap">🎬</div>
-          <div class="service-title">İçerik Üretimi</div>
-          <p class="service-desc">Video prodüksiyon, fotoğraf çekimi, grafik tasarım ve reels. Markanızın karakterini yansıtan, izlenmeyi hak eden içerikler. Sıradan değil, akılda kalan.</p>
-          <div class="service-tags">
-            <span class="tag">Video</span>
-            <span class="tag">Reels & TikTok</span>
-            <span class="tag">Grafik Tasarım</span>
-            <span class="tag">Copywriting</span>
-          </div>
-        </div>
-
-        <div class="service-card reveal reveal-delay-2">
-          <div class="service-num">03</div>
-          <div class="service-icon-wrap">⚡</div>
-          <div class="service-title">Reklam & Medya Satın Alma</div>
-          <p class="service-desc">Meta Ads, Google Ads, TikTok Ads — her kuruşunuzun nereye gittiğini biliyoruz. A/B testler, hedefleme optimizasyonu ve gerçek zamanlı raporlama ile bütçenizi maksimuma çekiyoruz.</p>
-          <div class="service-tags">
-            <span class="tag">Meta Ads</span>
-            <span class="tag">Google Ads</span>
-            <span class="tag">TikTok Ads</span>
-            <span class="tag">Retargeting</span>
-          </div>
-        </div>
-
-        <div class="service-card reveal reveal-delay-3">
-          <div class="service-num">04</div>
-          <div class="service-icon-wrap">🤝</div>
-          <div class="service-title">Influencer Marketing</div>
-          <p class="service-desc">10.000'den fazla influencer ağımızdan markanıza en uygun isimleri seçiyor, iş birliklerini baştan sona yönetiyoruz. Nano'dan mega influencer'a, her bütçeye uygun çözümler.</p>
-          <div class="service-tags">
-            <span class="tag">Seçim & Eşleştirme</span>
-            <span class="tag">Kampanya Yönetimi</span>
-            <span class="tag">Performans Takibi</span>
-            <span class="tag">10K+ Ağ</span>
-          </div>
-        </div>
-
-      </div>
+      <p class="section-lead reveal">Her hizmet, markanızın ihtiyacına göre özelleştiriliyor.</p>
     </div>
-  </section>
 
-  <!-- HOW WE WORK -->
-  <section id="how">
-    <div class="container">
-      <div class="how-grid">
-        <div>
-          <div class="section-tag reveal">Nasıl Çalışırız</div>
-          <h2 class="reveal">Basit süreç,<br /><span class="lime">net sonuçlar</span></h2>
-          <p class="lead reveal" style="margin-bottom: 48px;">Tahminlere değil, veriye dayalı kararlar alıyoruz. Her adım şeffaf, her sonuç ölçülebilir.</p>
-
-          <div class="how-steps">
-            <div class="how-step reveal">
-              <div class="step-badge">01</div>
-              <div class="step-body">
-                <h4>Keşif & Analiz</h4>
-                <p>Markanızı, sektörünüzü ve rakiplerinizi derinlemesine analiz ediyoruz. Fırsatlar nerede, riskler nerede — net bir tablo çıkarıyoruz.</p>
-              </div>
-            </div>
-            <div class="how-step reveal reveal-delay-1">
-              <div class="step-badge">02</div>
-              <div class="step-body">
-                <h4>Strateji & Planlama</h4>
-                <p>Size özel büyüme stratejisi hazırlıyoruz. Hedefler, kanallar, bütçe ve içerik planı — hepsi kâğıda dökülmüş, onayınıza sunuluyor.</p>
-              </div>
-            </div>
-            <div class="how-step reveal reveal-delay-2">
-              <div class="step-badge">03</div>
-              <div class="step-body">
-                <h4>Uygulama & Yayın</h4>
-                <p>İçerikler üretiliyor, reklamlar yayınlanıyor, iş birlikleri kuruluyor. Siz işinize bakın, biz sosyal medyanızı büyütelim.</p>
-              </div>
-            </div>
-            <div class="how-step reveal reveal-delay-3">
-              <div class="step-badge">04</div>
-              <div class="step-body">
-                <h4>Optimizasyon & Büyüme</h4>
-                <p>Her hafta verileri analiz ediyor, çalışanı ölçeklendiriyor, çalışmayanı dönüştürüyoruz. Sürekli iyileştirme, sürekli büyüme.</p>
-              </div>
-            </div>
-          </div>
+    <div class="services-list">
+      <div class="service-row reveal">
+        <div class="service-num">01</div>
+        <div class="service-name">Sosyal Medya Yönetimi</div>
+        <div class="service-tags-row">
+          <span class="stag">Instagram</span>
+          <span class="stag">TikTok</span>
+          <span class="stag">LinkedIn</span>
+          <span class="stag">X</span>
+          <span class="stag">YouTube</span>
         </div>
-
-        <div class="reveal">
-          <div class="how-visual">
-            <div style="margin-bottom: 8px;">
-              <div style="font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 24px;">Ortalama Müşteri Sonuçları</div>
-
-              <div class="metric-row">
-                <div class="metric-header">
-                  <span class="metric-name">Organik Erişim</span>
-                  <span class="metric-val">+420%</span>
-                </div>
-                <div class="metric-bar">
-                  <div class="metric-fill delay1" style="width: 84%;"></div>
-                </div>
-              </div>
-
-              <div class="metric-row" style="margin-top: 20px;">
-                <div class="metric-header">
-                  <span class="metric-name">Etkileşim Oranı</span>
-                  <span class="metric-val">+280%</span>
-                </div>
-                <div class="metric-bar">
-                  <div class="metric-fill delay2" style="width: 68%;"></div>
-                </div>
-              </div>
-
-              <div class="metric-row" style="margin-top: 20px;">
-                <div class="metric-header">
-                  <span class="metric-name">Reklam ROAS</span>
-                  <span class="metric-val">4.2x</span>
-                </div>
-                <div class="metric-bar">
-                  <div class="metric-fill delay3" style="width: 78%;"></div>
-                </div>
-              </div>
-
-              <div class="metric-row" style="margin-top: 20px;">
-                <div class="metric-header">
-                  <span class="metric-name">Takipçi Büyümesi</span>
-                  <span class="metric-val">+190%</span>
-                </div>
-                <div class="metric-bar">
-                  <div class="metric-fill delay4" style="width: 55%;"></div>
-                </div>
-              </div>
-            </div>
-
-            <div style="margin-top: 8px; padding-top: 24px; border-top: 1px solid var(--border);">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div style="background: var(--black); border-radius: 12px; padding: 20px;">
-                  <div style="font-size: 28px; font-weight: 700; color: var(--lime); font-family: 'Space Grotesk';">6 ay</div>
-                  <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">Ortalama sözleşme süresi</div>
-                </div>
-                <div style="background: var(--black); border-radius: 12px; padding: 20px;">
-                  <div style="font-size: 28px; font-weight: 700; color: var(--lime); font-family: 'Space Grotesk';">%94</div>
-                  <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">Yenileme oranı</div>
-                </div>
-              </div>
-            </div>
-
-            <p class="visual-caption">İlk 6 ay ortalama performans verileri · 2023–2024</p>
-          </div>
+        <div class="service-arrow">↗</div>
+      </div>
+      <div class="service-row reveal">
+        <div class="service-num">02</div>
+        <div class="service-name">İçerik Üretimi</div>
+        <div class="service-tags-row">
+          <span class="stag">Video Prodüksiyon</span>
+          <span class="stag">Reels & TikTok</span>
+          <span class="stag">Grafik Tasarım</span>
+          <span class="stag">Copywriting</span>
         </div>
+        <div class="service-arrow">↗</div>
+      </div>
+      <div class="service-row reveal">
+        <div class="service-num">03</div>
+        <div class="service-name">Reklam & Medya Satın Alma</div>
+        <div class="service-tags-row">
+          <span class="stag">Meta Ads</span>
+          <span class="stag">Google Ads</span>
+          <span class="stag">TikTok Ads</span>
+          <span class="stag">Retargeting</span>
+        </div>
+        <div class="service-arrow">↗</div>
+      </div>
+      <div class="service-row reveal">
+        <div class="service-num">04</div>
+        <div class="service-name">Influencer Marketing</div>
+        <div class="service-tags-row">
+          <span class="stag">Seçim & Eşleştirme</span>
+          <span class="stag">Kampanya Yönetimi</span>
+          <span class="stag">10K+ Ağ</span>
+          <span class="stag">Performans Takibi</span>
+        </div>
+        <div class="service-arrow">↗</div>
       </div>
     </div>
   </section>
 
   <!-- REFERANSLAR -->
   <section id="referanslar">
-    <div class="container">
-      <div class="ref-header">
-        <div>
-          <div class="section-tag reveal">Referanslar</div>
-          <h2 class="reveal">Müşterilerimiz<br /><span class="lime">ne diyor?</span></h2>
-        </div>
-        <p class="lead reveal">150'den fazla markayla çalıştık. Her biri farklı bir hikaye, her biri gerçek bir sonuç.</p>
+    <div class="clients-header">
+      <div class="section-tag reveal">Referanslar</div>
+      <h2 class="section-title reveal">Birlikte büyüdüğümüz <em>markalar</em></h2>
+    </div>
+
+    <div class="clients-label reveal">Çalıştığımız markalar</div>
+
+    <div class="logos-grid reveal">
+      <!-- ROW 1 -->
+      <div class="logo-cell">
+        <img src="images/logos/derin-kumas.png" alt="Derin Kumaş"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="logo-text" style="display:none">Derin Kumaş</span>
       </div>
+      <div class="logo-cell">
+        <img src="images/logos/sah-butik.png" alt="Şah Butik"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="logo-text" style="display:none">Şah Butik</span>
+      </div>
+      <div class="logo-cell">
+        <img src="images/logos/nurse-baby-spa.png" alt="Nurse Baby Spa Care"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="logo-text" style="display:none">Nurse Baby Spa Care</span>
+      </div>
+      <div class="logo-cell">
+        <img src="images/logos/joseph-chetin.png" alt="Joseph Chetin"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="logo-text" style="display:none">Joseph Chetin</span>
+      </div>
+      <div class="logo-cell">
+        <img src="images/logos/lalebahcesi.png" alt="Lalebahçesi Anaokulları"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="logo-text" style="display:none">Lalebahçesi Anaokulları</span>
+      </div>
+      <!-- ROW 2 -->
+      <div class="logo-cell">
+        <img src="images/logos/crema.png" alt="Crema"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="logo-text" style="display:none">Crema</span>
+      </div>
+      <div class="logo-cell">
+        <img src="images/logos/marka-7.png" alt="Marka"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="logo-text" style="display:none">— · —</span>
+      </div>
+      <div class="logo-cell">
+        <img src="images/logos/marka-8.png" alt="Marka"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="logo-text" style="display:none">— · —</span>
+      </div>
+      <div class="logo-cell">
+        <img src="images/logos/marka-9.png" alt="Marka"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="logo-text" style="display:none">— · —</span>
+      </div>
+      <div class="logo-cell">
+        <img src="images/logos/marka-10.png" alt="Marka"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <span class="logo-text" style="display:none">+ 140 Marka</span>
+      </div>
+    </div>
 
-      <div class="ref-grid">
-
-        <div class="ref-card featured reveal">
-          <div class="ref-stars">
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-          </div>
-          <p class="ref-text">"xSocialLab ile tanışmadan önce sosyal medyamız tamamen durgundu. 6 ay içinde Instagram'da 85.000 yeni takipçiye ulaştık ve online satışlarımız %230 arttı. Bu rakamların arkasında çok net bir strateji var."</p>
-          <div class="ref-author">
-            <div class="ref-avatar av-a">AK</div>
-            <div>
-              <div class="ref-name">Ayşe Kılıç</div>
-              <div class="ref-role">CEO · Botanica Store</div>
-            </div>
+    <!-- TESTIMONIALS -->
+    <div class="testimonials-grid">
+      <div class="tcard reveal">
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">xSocialLab ile 6 ay içinde Instagram'da 85K yeni takipçiye ulaştık. Sadece takipçi değil, gerçek satış geldi. Bu farkı yaratan strateji.</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">AK</div>
+          <div>
+            <div class="tcard-name">Ayşe Kılıç</div>
+            <div class="tcard-role">CEO · Derin Kumaş</div>
           </div>
         </div>
-
-        <div class="ref-card reveal reveal-delay-1">
-          <div class="ref-stars">
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-          </div>
-          <p class="ref-text">"Reklam bütçemizi yarıya indirdik ama sonuçlarımız 3 katına çıktı. Veriye olan hakimiyetleri inanılmaz. A/B testleri, hedefleme, yaratıcı — her şeyi düşünmüşler."</p>
-          <div class="ref-author">
-            <div class="ref-avatar av-b">MÖ</div>
-            <div>
-              <div class="ref-name">Mehmet Öztürk</div>
-              <div class="ref-role">Kurucu · Nexora Tech</div>
-            </div>
+      </div>
+      <div class="tcard reveal d1">
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">Reklam bütçemizi yarıya indirdik, sonuçlar 3 katına çıktı. Veriye dayalı yaklaşımları gerçekten fark yaratıyor. Ajans değil, iş ortağı gibi.</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">MÖ</div>
+          <div>
+            <div class="tcard-name">Mehmet Öztürk</div>
+            <div class="tcard-role">Kurucu · Şah Butik</div>
           </div>
         </div>
-
-        <div class="ref-card reveal reveal-delay-2">
-          <div class="ref-stars">
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-          </div>
-          <p class="ref-text">"TikTok'ta sıfırdan 200.000'e ulaştık. xSocialLab sadece içerik üretmedi, bir ses ve karakter yarattı. Şu an TikTok en büyük satış kanalımız."</p>
-          <div class="ref-author">
-            <div class="ref-avatar av-c">SY</div>
-            <div>
-              <div class="ref-name">Selin Yıldız</div>
-              <div class="ref-role">Pazarlama Müdürü · Lumira</div>
-            </div>
+      </div>
+      <div class="tcard reveal d2">
+        <div class="tcard-quote">"</div>
+        <p class="tcard-text">TikTok'ta sıfırdan 200.000'e ulaştık. xSocialLab sadece içerik üretmedi, bir ses ve karakter yarattı. Şu an TikTok en büyük satış kanalımız.</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">SY</div>
+          <div>
+            <div class="tcard-name">Selin Yıldız</div>
+            <div class="tcard-role">Pazarlama Md. · Lalebahçesi</div>
           </div>
         </div>
-
-        <div class="ref-card reveal">
-          <div class="ref-stars">
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-          </div>
-          <p class="ref-text">"Influencer kampanyamızda çalıştıkları influencer'ları nasıl seçtikleri, brifingleri nasıl hazırladıkları, süreci nasıl takip ettikleri — her şey çok profesyoneldi. Sonuç olarak en iyi kampanyamızı yaptık."</p>
-          <div class="ref-author">
-            <div class="ref-avatar av-d">EA</div>
-            <div>
-              <div class="ref-name">Emre Arslan</div>
-              <div class="ref-role">Marka Direktörü · Forma.co</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="ref-card reveal reveal-delay-1">
-          <div class="ref-stars">
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-          </div>
-          <p class="ref-text">"Aylık raporlar çok detaylı ve anlaşılır. Neyin işe yarayıp neyin yaramadığını çok net görüyoruz. Kararlarımızı artık tahmine göre değil, veriye göre alıyoruz."</p>
-          <div class="ref-author">
-            <div class="ref-avatar av-e">DK</div>
-            <div>
-              <div class="ref-name">Derya Koç</div>
-              <div class="ref-role">Genel Müdür · Pazar360</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="ref-card featured reveal reveal-delay-2">
-          <div class="ref-stars">
-            <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
-          </div>
-          <p class="ref-text">"2 yıldır birlikte çalışıyoruz. Ekip samimi, işini seviyor ve her zaman ulaşılabilir. Ajans değil, iş ortağı gibi hissettiriyor."</p>
-          <div class="ref-author">
-            <div class="ref-avatar av-a">BT</div>
-            <div>
-              <div class="ref-name">Berk Tekin</div>
-              <div class="ref-role">CEO · Steelbird Apparel</div>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </section>
 
-  <!-- BRANDS -->
-  <div id="brands">
-    <div class="brands-label">Birlikte çalıştığımız markalar</div>
-    <div style="overflow: hidden;">
-      <div class="logos-track">
-        <!-- double for loop -->
-        <span class="logo-item">Botanica</span>
-        <span class="logo-item">Nexora</span>
-        <span class="logo-item">Lumira</span>
-        <span class="logo-item">Forma.co</span>
-        <span class="logo-item">Pazar360</span>
-        <span class="logo-item">Steelbird</span>
-        <span class="logo-item">Helix</span>
-        <span class="logo-item">Arvo Studio</span>
-        <span class="logo-item">Nori</span>
-        <span class="logo-item">Klark</span>
-        <span class="logo-item">Botanica</span>
-        <span class="logo-item">Nexora</span>
-        <span class="logo-item">Lumira</span>
-        <span class="logo-item">Forma.co</span>
-        <span class="logo-item">Pazar360</span>
-        <span class="logo-item">Steelbird</span>
-        <span class="logo-item">Helix</span>
-        <span class="logo-item">Arvo Studio</span>
-        <span class="logo-item">Nori</span>
-        <span class="logo-item">Klark</span>
+  <!-- NASIL ÇALIŞIRIZ -->
+  <section id="nasil">
+    <div class="section-header">
+      <div>
+        <div class="section-tag reveal">Süreç</div>
+        <h2 class="section-title reveal">Nasıl <em>çalışırız?</em></h2>
+      </div>
+      <p class="section-lead reveal">4 adımda şeffaf, ölçülebilir büyüme.</p>
+    </div>
+
+    <div class="process-grid">
+      <div class="process-step reveal">
+        <div class="ps-num">01</div>
+        <div class="ps-title">Keşif & Analiz</div>
+        <p class="ps-text">Markanızı, sektörünüzü ve rakiplerinizi derinlemesine inceliyoruz. Nerede durduğunuzu, nereye gidebileceğinizi net görüyoruz.</p>
+      </div>
+      <div class="process-step reveal d1">
+        <div class="ps-num">02</div>
+        <div class="ps-title">Strateji & Plan</div>
+        <p class="ps-text">Size özel büyüme stratejisi hazırlıyoruz. Hedefler, kanallar, içerik ve bütçe — hepsi onayınıza sunuluyor.</p>
+      </div>
+      <div class="process-step reveal d2">
+        <div class="ps-num">03</div>
+        <div class="ps-title">Uygulama</div>
+        <p class="ps-text">İçerikler üretilir, kampanyalar yayınlanır, topluluk yönetimi başlar. Siz işinize bakın, biz sosyal medyanızı büyütelim.</p>
+      </div>
+      <div class="process-step reveal d3">
+        <div class="ps-num">04</div>
+        <div class="ps-title">Optimizasyon</div>
+        <p class="ps-text">Her hafta veriyi analiz ediyoruz. Çalışanı büyütüyor, çalışmayanı dönüştürüyoruz. Sürekli iyileştirme, sürekli büyüme.</p>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- CTA -->
-  <section id="cta">
-    <div class="container">
-      <div class="cta-box reveal">
-        <h2>Büyümeye<br />hazır mısınız?</h2>
-        <p>Ücretsiz 30 dakikalık strateji görüşmesi için hemen başvurun.<br />Kontenjanımız sınırlı.</p>
-        <div class="cta-actions">
-          <a href="mailto:merhaba@xsociallab.com" class="btn-dark">
-            Görüşme Ayarla
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-          <a href="tel:+902121234567" class="btn-outline-dark">Bizi Arayın</a>
-        </div>
+  <!-- SONUÇLAR -->
+  <section id="sonuclar">
+    <div class="section-header">
+      <div>
+        <div class="section-tag reveal">Sonuçlar</div>
+        <h2 class="section-title reveal">Rakamlar <em>konuşuyor.</em></h2>
       </div>
+      <p class="section-lead reveal">Gerçek müşteriler, gerçek kampanyalar, gerçek büyüme.</p>
+    </div>
+
+    <div class="results-grid">
+      <div class="result-item reveal">
+        <div class="result-kpi">4.2×</div>
+        <div class="result-label">ROAS artışı</div>
+        <div class="result-brand">E-ticaret / Moda</div>
+      </div>
+      <div class="result-item reveal d1">
+        <div class="result-kpi">890%</div>
+        <div class="result-label">Organik erişim büyümesi</div>
+        <div class="result-brand">SaaS / Teknoloji</div>
+      </div>
+      <div class="result-item reveal d2">
+        <div class="result-kpi">120K</div>
+        <div class="result-label">Yeni takipçi — 3 ayda</div>
+        <div class="result-brand">Yaşam tarzı markası</div>
+      </div>
+      <div class="result-item reveal d3">
+        <div class="result-kpi">−62%</div>
+        <div class="result-label">Müşteri edinim maliyeti</div>
+        <div class="result-brand">Fintech startup</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- İLETİŞİM -->
+  <section id="iletisim">
+    <div class="cta-eyebrow">İletişim</div>
+    <h2>
+      Hazır<br />
+      <span class="outline">mısınız</span><br />
+      <span class="lime">büyümeye?</span>
+    </h2>
+    <p>Ücretsiz 30 dakikalık strateji görüşmesi için hemen başvurun. Kontenjanımız sınırlı.</p>
+    <div class="cta-actions">
+      <a href="mailto:merhaba@xsociallab.com" class="btn-big">
+        Görüşme Ayarla
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="tel:+902121234567" class="btn-big-ghost">+90 212 123 45 67</a>
     </div>
   </section>
 
   <!-- FOOTER -->
   <footer>
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="logo">x<span>Social</span>Lab</div>
-        <p class="footer-desc">Sosyal medyanın gücünü markanız için çalıştırıyoruz. Strateji, içerik, büyüme — hepsi tek çatı altında.</p>
+    <div class="footer-top">
+      <div>
+        <a href="#" class="footer-logo-txt">x<span>Social</span>Lab</a>
+        <p class="footer-desc">Sosyal medyanın gücünü markanız için çalıştırıyoruz. Strateji, içerik, büyüme.</p>
         <div class="footer-socials">
-          <a href="#" class="social-btn" title="Instagram">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          <a href="#" class="fsocial" title="Instagram">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
           </a>
-          <a href="#" class="social-btn" title="LinkedIn">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 10v7M7 7v.01M12 17v-4.5a2.5 2.5 0 015 0V17M12 10v7"/></svg>
+          <a href="#" class="fsocial" title="TikTok">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.31 6.31 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.19 8.19 0 004.79 1.54V6.78a4.85 4.85 0 01-1.02-.09z"/></svg>
           </a>
-          <a href="#" class="social-btn" title="X / Twitter">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <a href="#" class="fsocial" title="LinkedIn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 10v7M7 7v.01M12 17v-4.5a2.5 2.5 0 015 0V17M12 10v7"/></svg>
           </a>
-          <a href="#" class="social-btn" title="TikTok">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.31 6.31 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.19 8.19 0 004.79 1.54V6.78a4.85 4.85 0 01-1.02-.09z"/></svg>
+          <a href="#" class="fsocial" title="X">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
           </a>
         </div>
       </div>
-
       <div class="footer-col">
         <h5>Hizmetler</h5>
-        <a href="#services">Sosyal Medya Yönetimi</a>
-        <a href="#services">İçerik Üretimi</a>
-        <a href="#services">Reklam Yönetimi</a>
-        <a href="#services">Influencer Marketing</a>
+        <a href="#hizmetler">Sosyal Medya Yönetimi</a>
+        <a href="#hizmetler">İçerik Üretimi</a>
+        <a href="#hizmetler">Reklam Yönetimi</a>
+        <a href="#hizmetler">Influencer Marketing</a>
       </div>
-
       <div class="footer-col">
         <h5>Şirket</h5>
-        <a href="#">Hakkımızda</a>
+        <a href="#hakkimizda">Hakkımızda</a>
         <a href="#referanslar">Referanslar</a>
         <a href="#">Blog</a>
         <a href="#">Kariyer</a>
       </div>
-
       <div class="footer-col">
         <h5>İletişim</h5>
         <a href="mailto:merhaba@xsociallab.com">merhaba@xsociallab.com</a>
@@ -1213,56 +1071,102 @@
         <a href="#">İstanbul, Türkiye</a>
       </div>
     </div>
-
     <div class="footer-bottom">
       <p>© 2025 xSocialLab. Tüm hakları saklıdır.</p>
       <div class="footer-badge">
-        <span style="width:6px;height:6px;background:var(--lime);border-radius:50%;display:inline-block;"></span>
+        <span class="dot"></span>
         Yeni müşteri kabul ediyoruz
       </div>
     </div>
   </footer>
 
   <script>
-    // Cursor glow
-    const glow = document.getElementById('cursorGlow');
+    // Custom cursor
+    const cur = document.getElementById('cur');
+    const curRing = document.getElementById('curRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
     document.addEventListener('mousemove', e => {
-      glow.style.left = e.clientX + 'px';
-      glow.style.top  = e.clientY + 'px';
+      mx = e.clientX; my = e.clientY;
+      cur.style.left = mx + 'px';
+      cur.style.top  = my + 'px';
+    });
+
+    (function animRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      curRing.style.left = rx + 'px';
+      curRing.style.top  = ry + 'px';
+      requestAnimationFrame(animRing);
+    })();
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cur.style.width = '18px'; cur.style.height = '18px';
+        curRing.style.width = '60px'; curRing.style.height = '60px';
+        curRing.style.borderColor = 'rgba(205,235,0,0.8)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cur.style.width = '10px'; cur.style.height = '10px';
+        curRing.style.width = '40px'; curRing.style.height = '40px';
+        curRing.style.borderColor = 'rgba(205,235,0,0.5)';
+      });
+    });
+
+    // Sticky nav
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
     });
 
     // Scroll reveal
     const observer = new IntersectionObserver(entries => {
       entries.forEach((entry, i) => {
         if (entry.isIntersecting) {
-          setTimeout(() => entry.target.classList.add('visible'), i * 60);
+          setTimeout(() => entry.target.classList.add('in'), i * 70);
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.08 });
 
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-    // Nav shrink on scroll
-    const nav = document.querySelector('nav');
-    window.addEventListener('scroll', () => {
-      nav.style.height = window.scrollY > 60 ? '60px' : '72px';
-    });
-
-    // Active nav link highlight
+    // Active nav highlight
     const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-
+    const navAs = document.querySelectorAll('.nav-links a[href^="#"]');
     window.addEventListener('scroll', () => {
-      let current = '';
-      sections.forEach(s => {
-        if (window.scrollY >= s.offsetTop - 120) current = s.id;
-      });
-      navLinks.forEach(a => {
-        a.style.color = a.getAttribute('href') === '#' + current
-          ? 'var(--lime)' : '';
+      let cur = '';
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) cur = s.id; });
+      navAs.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--lime)' : '';
       });
     });
+
+    // Number counter animation
+    function animCount(el, target, suffix, duration = 1800) {
+      const isFloat = !Number.isInteger(target);
+      const step = target / (duration / 16);
+      let val = 0;
+      const t = setInterval(() => {
+        val = Math.min(val + step, target);
+        el.textContent = (isFloat ? val.toFixed(1) : Math.round(val)) + suffix;
+        if (val >= target) clearInterval(t);
+      }, 16);
+    }
+
+    const countObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const raw = parseFloat(el.dataset.count);
+        const suffix = el.dataset.suffix || '';
+        animCount(el, raw, suffix);
+        countObserver.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
   </script>
+
 </body>
 </html>
