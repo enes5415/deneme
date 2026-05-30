@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xSocialLab — Sosyal Medya Ajansı</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --lime: #CDEB00;
+      --lime-light: #edf9a0;
+      --lime-bg: #f5ffd0;
+      --black: #111111;
+      --dark: #1a1a1a;
+      --gray: #f4f4f4;
+      --gray2: #e8e8e8;
+      --border: #e2e2e2;
+      --text: #111111;
+      --muted: #666666;
+      --muted2: #999999;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #fff; color: var(--text); overflow-x: hidden; }
+
+    /* ── ANNOUNCEMENT BAR ── */
+    .ann-bar {
+      background: var(--black);
+      padding: 10px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .ann-text {
+      font-size: 13px; font-weight: 600; color: var(--lime);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ann-text::before { content: '✦'; font-size: 10px; }
+    .ann-actions { display: flex; gap: 12px; }
+    .ann-btn {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 600; color: #fff;
+      text-decoration: none; padding: 6px 14px;
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 100px;
+      transition: background .2s, border-color .2s;
+    }
+    .ann-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.4); }
+    .ann-btn-lime { background: var(--lime); color: var(--black); border-color: var(--lime); }
+    .ann-btn-lime:hover { opacity: .88; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 500;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px; height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 1px 12px rgba(0,0,0,0.05);
+    }
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 21px; font-weight: 800; letter-spacing: -1px;
+      color: var(--black); text-decoration: none;
+    }
+    .nav-logo .x { color: var(--lime); }
+    .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+    .nav-links a {
+      font-size: 14px; font-weight: 500; color: var(--muted);
+      text-decoration: none; padding: 8px 14px; border-radius: 8px;
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover { color: var(--black); background: var(--gray); }
+    .nav-cta {
+      background: var(--lime); color: var(--black);
+      padding: 11px 22px; border-radius: 10px;
+      font-size: 14px; font-weight: 700;
+      text-decoration: none; transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: .85; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: calc(100vh - 116px);
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 0;
+      padding: 80px 80px 80px 80px;
+      max-width: 1400px; margin: 0 auto;
+    }
+    .hero-left { padding-right: 48px; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--lime-bg); border: 1px solid var(--lime);
+      padding: 6px 14px; border-radius: 100px;
+      font-size: 12px; font-weight: 700; color: #5a6600;
+      margin-bottom: 28px; letter-spacing: 0.3px;
+    }
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(38px, 5vw, 62px);
+      font-weight: 800; line-height: 1.1; letter-spacing: -2px;
+      margin-bottom: 20px;
+    }
+    .hero h1 .highlight {
+      background: var(--lime);
+      padding: 2px 8px; border-radius: 6px;
+      display: inline;
+    }
+    .hero-sub {
+      font-size: 16px; color: var(--muted); line-height: 1.75;
+      margin-bottom: 36px; max-width: 480px;
+    }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-green {
+      background: var(--lime); color: var(--black);
+      padding: 14px 28px; border-radius: 10px;
+      font-size: 14px; font-weight: 700;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+      transition: opacity .2s, transform .2s;
+    }
+    .btn-green:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-outline {
+      background: transparent; color: var(--black);
+      padding: 14px 28px; border-radius: 10px;
+      font-size: 14px; font-weight: 600; border: 1.5px solid var(--border);
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+      transition: border-color .2s;
+    }
+    .btn-outline:hover { border-color: var(--black); }
+
+    /* Hero right mosaic */
+    .hero-right {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 160px);
+      gap: 12px;
+    }
+    .mosaic-cell {
+      border-radius: 16px; overflow: hidden;
+      background: var(--gray);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mosaic-cell img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .mosaic-cell.accent {
+      background: var(--lime-bg); border: 2px solid var(--lime);
+    }
+    .mosaic-cell.dark {
+      background: var(--black);
+    }
+    .mosaic-icon {
+      font-size: 36px;
+    }
+    .mosaic-cell.span2h { grid-column: span 1; grid-row: span 2; }
+    .mosaic-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 700; color: var(--muted);
+      text-align: center; padding: 16px;
+    }
+
+    /* ── SECTION COMMONS ── */
+    .section { padding: 96px 40px; }
+    .section.gray-bg { background: var(--gray); }
+    .section.lime-bg { background: var(--lime-bg); }
+    .section.dark-bg { background: var(--black); }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-head { text-align: center; margin-bottom: 56px; }
+    .section-head h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(30px, 4vw, 46px); font-weight: 800;
+      letter-spacing: -1.5px; margin-bottom: 12px;
+    }
+    .section-head p { font-size: 16px; color: var(--muted); line-height: 1.7; }
+
+    /* ── LOGO STRIP ── */
+    #referanslar-logolar .section-head { text-align: center; }
+    .logos-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      border: 1px solid var(--border); border-radius: 16px;
+      overflow: hidden;
+    }
+    .logo-card {
+      padding: 32px 24px;
+      display: flex; align-items: center; justify-content: center;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      min-height: 96px;
+      background: #fff;
+      transition: background .2s;
+    }
+    .logo-card:nth-child(5n) { border-right: none; }
+    .logo-card:nth-last-child(-n+5) { border-bottom: none; }
+    .logo-card:hover { background: var(--gray); }
+    .logo-card img {
+      max-width: 120px; max-height: 48px;
+      width: auto; height: auto; object-fit: contain;
+      filter: grayscale(1); opacity: 0.6;
+      transition: filter .3s, opacity .3s;
+    }
+    .logo-card:hover img { filter: grayscale(0); opacity: 1; }
+    .logo-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 700; color: #bbb;
+      text-align: center; letter-spacing: 0.5px;
+    }
+
+    /* ── EKİP SECTION ── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 200px);
+      gap: 8px; border-radius: 20px; overflow: hidden;
+    }
+    .team-cell {
+      background: var(--gray); overflow: hidden;
+      position: relative;
+    }
+    .team-cell img { width: 100%; height: 100%; object-fit: cover; }
+    .team-cell.wide { grid-column: span 2; }
+    .team-cell.tall { grid-row: span 2; }
+    .team-cell.placeholder {
+      display: flex; align-items: center; justify-content: center;
+      background: var(--lime-bg);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 32px; color: #9ab000;
+    }
+
+    /* ── HİZMET KARTLARI ── */
+    .services-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    .service-card {
+      background: var(--gray); border-radius: 20px;
+      overflow: hidden; transition: transform .3s, box-shadow .3s;
+      cursor: default;
+    }
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+    }
+    .service-card-img {
+      height: 200px; background: #e0e0e0;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+    .service-card-img-inner {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px;
+    }
+    /* Illustrated placeholder backgrounds */
+    .sc-bg-1 { background: linear-gradient(135deg, #e8f4e8, #d4ecff); }
+    .sc-bg-2 { background: linear-gradient(135deg, #fff4e0, #fde8f0); }
+    .sc-bg-3 { background: linear-gradient(135deg, #ffe8f5, #f0e8ff); }
+    .sc-bg-4 { background: linear-gradient(135deg, #e8fff0, #e0f4ff); }
+    .service-card-body { padding: 28px 28px 32px; }
+    .service-card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.5px;
+    }
+    .service-card-desc {
+      font-size: 14px; color: var(--muted); line-height: 1.75; margin-bottom: 20px;
+    }
+    .service-card-link {
+      font-size: 14px; font-weight: 700; color: var(--black);
+      text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
+      transition: gap .2s;
+    }
+    .service-card-link:hover { gap: 8px; }
+
+    /* ── VİDEO REFERANSLAR (slider) ── */
+    .video-refs-wrap { position: relative; }
+    .video-refs-scroll {
+      display: flex; gap: 16px;
+      overflow-x: auto; padding-bottom: 12px;
+      scroll-snap-type: x mandatory;
+      -ms-overflow-style: none; scrollbar-width: none;
+    }
+    .video-refs-scroll::-webkit-scrollbar { display: none; }
+    .vref-card {
+      flex-shrink: 0; width: 220px;
+      border-radius: 16px; overflow: hidden;
+      position: relative; scroll-snap-align: start;
+      aspect-ratio: 9/16; background: var(--black);
+      cursor: pointer;
+    }
+    .vref-card-bg {
+      width: 100%; height: 100%;
+      background: linear-gradient(160deg, #222 0%, #111 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .vref-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
+    }
+    .vref-play {
+      position: absolute; top: 14px; right: 14px;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--lime);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2;
+    }
+    .vref-play svg { width: 14px; height: 14px; fill: var(--black); margin-left: 2px; }
+    .vref-brand {
+      position: absolute; bottom: 20px; left: 20px; z-index: 2;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px; font-weight: 700; color: #fff;
+    }
+    .vref-brand-sub { font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.6); }
+    .vref-icon { font-size: 40px; }
+    .slider-controls {
+      display: flex; gap: 10px; margin-top: 28px; justify-content: center;
+    }
+    .slider-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--lime); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: opacity .2s;
+    }
+    .slider-btn:hover { opacity: .8; }
+    .see-all-wrap { text-align: center; margin-top: 32px; }
+    .btn-dark {
+      background: var(--black); color: #fff;
+      padding: 14px 32px; border-radius: 10px;
+      font-size: 14px; font-weight: 700;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+      transition: opacity .2s;
+    }
+    .btn-dark:hover { opacity: .85; }
+
+    /* ── SOSYAL MEDYA İÇERİKLER ── */
+    .content-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
+    }
+    .content-cell {
+      aspect-ratio: 9/16; border-radius: 12px;
+      background: var(--gray); overflow: hidden;
+      position: relative; cursor: pointer;
+      transition: transform .2s;
+    }
+    .content-cell:hover { transform: scale(1.02); }
+    .content-cell-inner {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    .content-cell .reel-icon {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(0,0,0,0.5); color: #fff;
+      border-radius: 6px; padding: 4px 6px; font-size: 11px;
+    }
+    .cc-1 { background: linear-gradient(135deg,#1a1a2e,#16213e); }
+    .cc-2 { background: linear-gradient(135deg,#0f3460,#533483); }
+    .cc-3 { background: linear-gradient(135deg,#e94560,#0f3460); }
+    .cc-4 { background: linear-gradient(135deg,#2b2d42,#ef233c); }
+    .cc-5 { background: linear-gradient(135deg,#1b4332,#2d6a4f); }
+    .cc-6 { background: linear-gradient(135deg,#370617,#6a040f); }
+    .cc-7 { background: linear-gradient(135deg,#212529,#495057); }
+    .cc-8 { background: linear-gradient(135deg,#004b23,#007200); }
+    .cc-9 { background: linear-gradient(135deg,#0077b6,#00b4d8); }
+    .cc-10 { background: linear-gradient(135deg,#7b2d8b,#c77dff); }
+    .cc-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; font-weight: 700; color: #fff;
+      text-align: center; line-height: 1.4;
+    }
+    .cc-logo { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); margin-top: 8px; }
+
+    /* ── CTA LİME ── */
+    .cta-lime {
+      background: var(--lime-bg);
+      padding: 96px 40px;
+    }
+    .cta-lime-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 80px;
+    }
+    .cta-lime h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(30px, 4vw, 48px); font-weight: 800;
+      letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 32px;
+    }
+    .cta-lime h2 em { font-style: italic; }
+    .cta-lime .btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* Team orbit */
+    .orbit-wrap {
+      display: flex; align-items: center; justify-content: center;
+      position: relative; width: 320px; height: 320px; margin: 0 auto;
+    }
+    .orbit-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      background: #fff; border: 2px solid var(--lime);
+      border-radius: 100px; padding: 12px 20px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px; font-weight: 700; color: var(--black);
+      white-space: nowrap; z-index: 2;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .orbit-circle {
+      position: absolute; top: 50%; left: 50%;
+      width: 260px; height: 260px;
+      border: 1.5px solid rgba(205,235,0,0.5);
+      border-radius: 50%;
+      transform: translate(-50%,-50%);
+    }
+    .orbit-circle-2 {
+      width: 300px; height: 300px;
+      border-color: rgba(205,235,0,0.2);
+    }
+    .orbit-avatar {
+      position: absolute; width: 52px; height: 52px;
+      border-radius: 50%; overflow: hidden;
+      background: #ddd; border: 2px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 16px; color: var(--black);
+    }
+    /* Position avatars around circle */
+    .oa-1 { top: 0; left: 50%; transform: translateX(-50%) translateY(-50%); background: var(--lime); }
+    .oa-2 { top: 25%; right: 0; transform: translateX(50%); background: #f0f0f0; }
+    .oa-3 { bottom: 15%; right: 5%; background: #e0e0e0; }
+    .oa-4 { bottom: 0; left: 50%; transform: translateX(-50%) translateY(50%); background: #d8f0a0; }
+    .oa-5 { bottom: 15%; left: 5%; background: #f5f5f5; }
+    .oa-6 { top: 25%; left: 0; transform: translateX(-50%); background: var(--lime-bg); }
+    .orbit-anim { animation: spin 20s linear infinite; }
+    @keyframes spin { from{transform:translate(-50%,-50%) rotate(0deg)} to{transform:translate(-50%,-50%) rotate(360deg)} }
+    .orbit-avatar { animation: counter-spin 20s linear infinite; }
+    @keyframes counter-spin { from{transform:rotate(0deg)} to{transform:rotate(-360deg)} }
+    .oa-1,.oa-2,.oa-3,.oa-4,.oa-5,.oa-6 { animation: none; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--black);
+      padding: 72px 40px 36px;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px; margin-bottom: 56px;
+    }
+    .footer-brand-txt {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px; font-weight: 800; color: #fff;
+      letter-spacing: -0.5px; margin-bottom: 10px; display: block;
+    }
+    .footer-brand-txt .x { color: var(--lime); }
+    .footer-desc {
+      font-size: 13px; color: #666; line-height: 1.75; margin-bottom: 20px;
+    }
+    .footer-phone {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 600; color: #fff;
+      text-decoration: none;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 10px 18px; border-radius: 10px;
+      transition: background .2s;
+    }
+    .footer-phone:hover { background: rgba(255,255,255,0.12); }
+    .footer-col h5 {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: #555; margin-bottom: 20px;
+    }
+    .footer-col a {
+      display: block; font-size: 13px; color: #888;
+      text-decoration: none; margin-bottom: 12px; transition: color .2s;
+    }
+    .footer-col a:hover { color: var(--lime); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.07); padding-top: 28px;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-bottom p { font-size: 12px; color: #555; }
+    .footer-socials { display: flex; gap: 14px; }
+    .fsoc {
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      color: #888; font-size: 14px; text-decoration: none;
+      transition: border-color .2s, color .2s;
+    }
+    .fsoc:hover { border-color: var(--lime); color: var(--lime); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--black); padding: 56px 40px;
+    }
+    .stats-bar-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 0;
+    }
+    .stats-item {
+      padding: 0 40px; text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .stats-item:first-child { padding-left: 0; text-align: left; }
+    .stats-item:last-child  { border-right: none; }
+    .stats-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 52px; font-weight: 800; color: var(--lime);
+      line-height: 1; letter-spacing: -2px;
+    }
+    .stats-label { font-size: 14px; color: #888; margin-top: 6px; }
+
+    /* ── REVEAL ── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .d1{transition-delay:.1s} .d2{transition-delay:.2s}
+    .d3{transition-delay:.3s} .d4{transition-delay:.4s}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1024px){
+      .hero{grid-template-columns:1fr;padding:48px 28px;gap:40px;}
+      .hero-left{padding-right:0;}
+      .hero-right{display:none;}
+      .stats-bar-inner{grid-template-columns:repeat(2,1fr);gap:32px;}
+      .stats-item{border-right:none;padding:0;}
+      .services-grid{grid-template-columns:1fr;}
+      .content-grid{grid-template-columns:repeat(3,1fr);}
+      .cta-lime-inner{grid-template-columns:1fr;gap:40px;}
+      .footer-top{grid-template-columns:1fr 1fr;}
+      nav{padding:0 20px;}
+      .nav-links{display:none;}
+      .section{padding:64px 20px;}
+      .logos-strip{grid-template-columns:repeat(3,1fr);}
+    }
+    @media(max-width:640px){
+      .logos-strip{grid-template-columns:repeat(2,1fr);}
+      .content-grid{grid-template-columns:repeat(2,1fr);}
+      .footer-top{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ANNOUNCEMENT BAR -->
+  <div class="ann-bar">
+    <div class="ann-text">xSocialLab ile tanışmaya hazır mısın?</div>
+    <div class="ann-actions">
+      <a href="#iletisim" class="ann-btn">📅 Toplantı Planla</a>
+      <a href="tel:+905001234567" class="ann-btn ann-btn-lime">📞 Sizi Arayalım</a>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo"><span class="x">x</span>SocialLab</a>
+    <ul class="nav-links">
+      <li><a href="#hakkimizda">Hakkımızda</a></li>
+      <li><a href="#hizmetler">Hizmetlerimiz</a></li>
+      <li><a href="#referanslar-logolar">Referanslar</a></li>
+      <li><a href="#iletisim">İletişim</a></li>
+    </ul>
+    <a href="#iletisim" class="nav-cta">Ücretsiz Analiz Alın</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">✦ Sosyal Medya Ajansı · İstanbul</div>
+      <h1>
+        Dijitalleşmeye<br />
+        <span class="highlight">Hazır Mısınız?</span>
+      </h1>
+      <p class="hero-sub">
+        xSocialLab ile şimdi harekete geçin, dijitalde büyümeye başlayın! Strateji, içerik, reklam ve influencer — hepsi tek çatı altında.
+      </p>
+      <div class="hero-btns">
+        <a href="#iletisim" class="btn-green">📅 Toplantı Planla</a>
+        <a href="tel:+905001234567" class="btn-outline">📞 Sizi Arayalım</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="mosaic-cell span2h" style="grid-row:span 2;">
+        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f0ffe0,#e0f8a0);">
+          <span style="font-size:80px;">📱</span>
+        </div>
+      </div>
+      <div class="mosaic-cell accent"><span class="mosaic-icon">✦</span></div>
+      <div class="mosaic-cell" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);">
+        <span style="font-size:32px;">🚀</span>
+      </div>
+      <div class="mosaic-cell" style="background:linear-gradient(135deg,#e8f4e8,#c8e6c9);">
+        <span style="font-size:32px;">📊</span>
+      </div>
+      <div class="mosaic-cell dark">
+        <span style="font-size:32px;">🎬</span>
+      </div>
+      <div class="mosaic-cell" style="background:var(--lime);"><span class="mosaic-icon" style="font-size:28px;color:var(--black);">🤝</span></div>
+      <div class="mosaic-cell" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2);">
+        <span style="font-size:32px;">💡</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stats-bar-inner">
+      <div class="stats-item">
+        <div class="stats-num">150+</div>
+        <div class="stats-label">Mutlu marka</div>
+      </div>
+      <div class="stats-item">
+        <div class="stats-num">340%</div>
+        <div class="stats-label">Ortalama ROI artışı</div>
+      </div>
+      <div class="stats-item">
+        <div class="stats-num">12M+</div>
+        <div class="stats-label">Aylık organik erişim</div>
+      </div>
+      <div class="stats-item">
+        <div class="stats-num">%94</div>
+        <div class="stats-label">Sözleşme yenileme oranı</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFERANS LOGOLARI -->
+  <section class="section" id="referanslar-logolar">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Referanslarımız</h2>
+        <p>Markaların tercihi olmaktan gurur duyuyoruz.</p>
+      </div>
+      <div class="logos-strip reveal">
+        <!-- Row 1 -->
+        <div class="logo-card">
+          <img src="images/logos/derin-kumas.png" alt="Derin Kumaş"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-name" style="display:none">DERİN KUMAŞ</span>
+        </div>
+        <div class="logo-card">
+          <img src="images/logos/sah-butik.png" alt="Şah Butik"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-name" style="display:none">ŞAH BUTİK</span>
+        </div>
+        <div class="logo-card">
+          <img src="images/logos/nurse-baby-spa.png" alt="Nurse Baby Spa Care"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-name" style="display:none">NURSE BABY SPA</span>
+        </div>
+        <div class="logo-card">
+          <img src="images/logos/joseph-chetin.png" alt="Joseph Chetin"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-name" style="display:none">JOSEPH CHETİN</span>
+        </div>
+        <div class="logo-card">
+          <img src="images/logos/lalebahcesi.png" alt="Lalebahçesi Anaokulları"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-name" style="display:none">LALEBAHÇESİ</span>
+        </div>
+        <!-- Row 2 -->
+        <div class="logo-card">
+          <img src="images/logos/crema.png" alt="Crema"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-name" style="display:none">CREMA</span>
+        </div>
+        <div class="logo-card">
+          <img src="images/logos/marka-7.png" alt="Marka"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-name" style="display:none">MARKA</span>
+        </div>
+        <div class="logo-card">
+          <img src="images/logos/marka-8.png" alt="Marka"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-name" style="display:none">MARKA</span>
+        </div>
+        <div class="logo-card">
+          <img src="images/logos/marka-9.png" alt="Marka"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-name" style="display:none">MARKA</span>
+        </div>
+        <div class="logo-card">
+          <img src="images/logos/marka-10.png" alt="Marka"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <span class="logo-name" style="display:none">VE DAHA FAZLASI</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EKİP / BİZ KİMİZ -->
+  <section class="section gray-bg" id="hakkimizda">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Biz Kimiz ve Neler Yapıyoruz?</h2>
+        <p>Sosyal medyayı gerçek bir büyüme motoruna dönüştüren ekibiz.<br />Bizi yakından tanımanızdan mutluluk duyarız 🤝</p>
+      </div>
+      <div class="team-grid reveal">
+        <div class="team-cell placeholder wide">
+          <span style="font-size:48px;">📸</span>
+        </div>
+        <div class="team-cell placeholder">
+          <span style="font-size:36px;">🎯</span>
+        </div>
+        <div class="team-cell placeholder">
+          <span style="font-size:36px;">💡</span>
+        </div>
+        <div class="team-cell placeholder">
+          <span style="font-size:36px;">📊</span>
+        </div>
+        <div class="team-cell placeholder wide tall">
+          <span style="font-size:64px;">🚀</span>
+        </div>
+        <div class="team-cell placeholder">
+          <span style="font-size:36px;">🎬</span>
+        </div>
+        <div class="team-cell placeholder">
+          <span style="font-size:36px;">🤳</span>
+        </div>
+        <div class="team-cell placeholder">
+          <span style="font-size:36px;">⚡</span>
+        </div>
+        <div class="team-cell placeholder">
+          <span style="font-size:36px;">🌟</span>
+        </div>
+      </div>
+      <p style="text-align:center;margin-top:20px;font-size:12px;color:var(--muted2);">↑ Ekip fotoğraflarınızı images/team/ klasörüne ekleyin</p>
+    </div>
+  </section>
+
+  <!-- HİZMETLER -->
+  <section class="section" id="hizmetler">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Hizmetlerimiz</h2>
+        <p>Sadece mecraları değil, hedeflerinizi de yönetiyoruz.<br />İşte sunduklarımız.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal">
+          <div class="service-card-img sc-bg-1">
+            <div class="service-card-img-inner">📱</div>
+          </div>
+          <div class="service-card-body">
+            <div class="service-card-title">Sosyal Medya Yönetimi</div>
+            <p class="service-card-desc">Sosyal medya hesaplarınızı büyütmek için yalnızca içerik değil, stratejik adımlar da sunuyoruz. İçerik takvimi, topluluk yönetimi ve algoritmaları çalıştıracak planlama dahil tüm süreci sizin için yönetiyoruz.</p>
+            <a href="#" class="service-card-link">Detayları Gör ↗</a>
+          </div>
+        </div>
+        <div class="service-card reveal d1">
+          <div class="service-card-img sc-bg-2">
+            <div class="service-card-img-inner">🎬</div>
+          </div>
+          <div class="service-card-body">
+            <div class="service-card-title">İçerik Üretimi</div>
+            <p class="service-card-desc">Video prodüksiyon, fotoğraf çekimi, grafik tasarım ve reels. Markanızın karakterini yansıtan, izlenmeyi hak eden içerikler. Sıradan değil, akılda kalan.</p>
+            <a href="#" class="service-card-link">Detayları Gör ↗</a>
+          </div>
+        </div>
+        <div class="service-card reveal d2">
+          <div class="service-card-img sc-bg-3">
+            <div class="service-card-img-inner">⚡</div>
+          </div>
+          <div class="service-card-body">
+            <div class="service-card-title">Reklam & Medya Satın Alma</div>
+            <p class="service-card-desc">Meta, Google ve TikTok reklamlarında veri odaklı kampanyalar. A/B testleri, hedefleme optimizasyonu ve gerçek zamanlı raporlama ile bütçenizi maksimuma çekiyoruz.</p>
+            <a href="#" class="service-card-link">Detayları Gör ↗</a>
+          </div>
+        </div>
+        <div class="service-card reveal d3">
+          <div class="service-card-img sc-bg-4">
+            <div class="service-card-img-inner">🤝</div>
+          </div>
+          <div class="service-card-body">
+            <div class="service-card-title">UGC & Influencer Marketing</div>
+            <p class="service-card-desc">Hedef kitlenize uygun yüzler, yaratıcı senaryolar ve güçlü dağıtım stratejileriyle UGC & Influencer pazarlama kampanyalarınızı uçtan uca biz yönetiyoruz.</p>
+            <a href="#" class="service-card-link">Detayları Gör ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VİDEO REFERANSLAR -->
+  <section class="section gray-bg" id="video-referanslar">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Referanslarımız</h2>
+        <p>Etkili dijital pazarlamanın arkasında kim var?<br />Markalarımız anlatıyor.</p>
+      </div>
+      <div class="video-refs-wrap reveal" id="vrefsWrap">
+        <div class="video-refs-scroll" id="vrefsScroll">
+          <div class="vref-card">
+            <div class="vref-card-bg cc-1">
+              <span class="vref-icon">🧵</span>
+              <div class="vref-card-overlay"></div>
+            </div>
+            <div class="vref-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            <div class="vref-brand">Derin Kumaş<br/><span class="vref-brand-sub">xSocialLab</span></div>
+          </div>
+          <div class="vref-card">
+            <div class="vref-card-bg cc-2">
+              <span class="vref-icon">👗</span>
+              <div class="vref-card-overlay"></div>
+            </div>
+            <div class="vref-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            <div class="vref-brand">Şah Butik<br/><span class="vref-brand-sub">xSocialLab</span></div>
+          </div>
+          <div class="vref-card">
+            <div class="vref-card-bg cc-3">
+              <span class="vref-icon">👶</span>
+              <div class="vref-card-overlay"></div>
+            </div>
+            <div class="vref-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            <div class="vref-brand">Nurse Baby Spa<br/><span class="vref-brand-sub">xSocialLab</span></div>
+          </div>
+          <div class="vref-card">
+            <div class="vref-card-bg cc-4">
+              <span class="vref-icon">🎩</span>
+              <div class="vref-card-overlay"></div>
+            </div>
+            <div class="vref-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            <div class="vref-brand">Joseph Chetin<br/><span class="vref-brand-sub">xSocialLab</span></div>
+          </div>
+          <div class="vref-card">
+            <div class="vref-card-bg cc-5">
+              <span class="vref-icon">🌷</span>
+              <div class="vref-card-overlay"></div>
+            </div>
+            <div class="vref-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            <div class="vref-brand">Lalebahçesi<br/><span class="vref-brand-sub">xSocialLab</span></div>
+          </div>
+          <div class="vref-card">
+            <div class="vref-card-bg cc-6">
+              <span class="vref-icon">☕</span>
+              <div class="vref-card-overlay"></div>
+            </div>
+            <div class="vref-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            <div class="vref-brand">Crema<br/><span class="vref-brand-sub">xSocialLab</span></div>
+          </div>
+          <div class="vref-card">
+            <div class="vref-card-bg cc-7">
+              <span class="vref-icon">🏠</span>
+              <div class="vref-card-overlay"></div>
+            </div>
+            <div class="vref-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            <div class="vref-brand">Marka<br/><span class="vref-brand-sub">xSocialLab</span></div>
+          </div>
+          <div class="vref-card">
+            <div class="vref-card-bg cc-8">
+              <span class="vref-icon">🌿</span>
+              <div class="vref-card-overlay"></div>
+            </div>
+            <div class="vref-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            <div class="vref-brand">Marka<br/><span class="vref-brand-sub">xSocialLab</span></div>
+          </div>
+          <div class="vref-card">
+            <div class="vref-card-bg cc-9">
+              <span class="vref-icon">💎</span>
+              <div class="vref-card-overlay"></div>
+            </div>
+            <div class="vref-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            <div class="vref-brand">Marka<br/><span class="vref-brand-sub">xSocialLab</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="slider-controls">
+        <button class="slider-btn" id="vPrev">←</button>
+        <button class="slider-btn" id="vNext">→</button>
+      </div>
+      <div class="see-all-wrap" style="margin-top:24px;">
+        <a href="#" class="btn-dark">Tümünü Gör</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOSYAL MEDYA İÇERİKLER -->
+  <section class="section" id="icerikler">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Sosyal Medya İçeriklerimiz</h2>
+        <p>Ajans içinden kareler, başarı hikayeleri ve yaratıcı kampanya<br />örnekleri sosyal medya hesaplarımızda!</p>
+      </div>
+      <div class="content-grid reveal">
+        <div class="content-cell cc-1">
+          <div class="content-cell-inner">
+            <div class="cc-text">Markanız için doğru strateji nedir?</div>
+            <div class="cc-logo">xSocialLab</div>
+          </div>
+          <div class="reel-icon">▶</div>
+        </div>
+        <div class="content-cell cc-2">
+          <div class="content-cell-inner">
+            <div class="cc-text">Takipçi sayınızı 3 ayda 2 katına çıkarın</div>
+            <div class="cc-logo">xSocialLab</div>
+          </div>
+          <div class="reel-icon">▶</div>
+        </div>
+        <div class="content-cell cc-3">
+          <div class="content-cell-inner">
+            <div class="cc-text">Reklam bütçenizi nasıl optimize edersiniz?</div>
+            <div class="cc-logo">xSocialLab</div>
+          </div>
+          <div class="reel-icon">▶</div>
+        </div>
+        <div class="content-cell cc-4">
+          <div class="content-cell-inner">
+            <div class="cc-text">2025'te sosyal medya trendleri</div>
+            <div class="cc-logo">xSocialLab</div>
+          </div>
+          <div class="reel-icon">▶</div>
+        </div>
+        <div class="content-cell cc-5">
+          <div class="content-cell-inner">
+            <div class="cc-text">İçerik üretiminde yapay zeka</div>
+            <div class="cc-logo">xSocialLab</div>
+          </div>
+          <div class="reel-icon">▶</div>
+        </div>
+        <div class="content-cell cc-6">
+          <div class="content-cell-inner">
+            <div class="cc-text">TikTok algoritmasi sırları</div>
+            <div class="cc-logo">xSocialLab</div>
+          </div>
+          <div class="reel-icon">▶</div>
+        </div>
+        <div class="content-cell cc-7">
+          <div class="content-cell-inner">
+            <div class="cc-text">Influencer seçerken dikkat!</div>
+            <div class="cc-logo">xSocialLab</div>
+          </div>
+          <div class="reel-icon">▶</div>
+        </div>
+        <div class="content-cell cc-8">
+          <div class="content-cell-inner">
+            <div class="cc-text">Meta Ads'ta ROAS nasıl artırılır?</div>
+            <div class="cc-logo">xSocialLab</div>
+          </div>
+          <div class="reel-icon">▶</div>
+        </div>
+        <div class="content-cell cc-9">
+          <div class="content-cell-inner">
+            <div class="cc-text">Müşteri hikayeleri</div>
+            <div class="cc-logo">xSocialLab</div>
+          </div>
+          <div class="reel-icon">▶</div>
+        </div>
+        <div class="content-cell cc-10">
+          <div class="content-cell-inner">
+            <div class="cc-text">Ekibimizle tanışın 👋</div>
+            <div class="cc-logo">xSocialLab</div>
+          </div>
+          <div class="reel-icon">▶</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA LİME -->
+  <div class="cta-lime" id="iletisim">
+    <div class="cta-lime-inner">
+      <div>
+        <h2>Dijital Dünyada<br /><em>Tüm Adımlarınızda<br />Yanınızdayız!</em></h2>
+        <div class="btns">
+          <a href="#" class="btn-green">📅 Toplantı Planla</a>
+          <a href="tel:+905001234567" class="btn-outline">📞 Sizi Arayalım</a>
+        </div>
+      </div>
+      <div class="orbit-wrap">
+        <div class="orbit-circle"></div>
+        <div class="orbit-circle orbit-circle-2"></div>
+        <div class="orbit-center">Destek Ekibi 💬</div>
+        <div class="orbit-avatar oa-1">A</div>
+        <div class="orbit-avatar oa-2">B</div>
+        <div class="orbit-avatar oa-3">C</div>
+        <div class="orbit-avatar oa-4">D</div>
+        <div class="orbit-avatar oa-5">E</div>
+        <div class="orbit-avatar oa-6">F</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <span class="footer-brand-txt"><span class="x">x</span>SocialLab</span>
+          <p class="footer-desc">Sorularınız mı var? 💬<br />Biz Buradayız.</p>
+          <a href="tel:+905001234567" class="footer-phone">📞 (0850) 000 00 00</a>
+        </div>
+        <div class="footer-col">
+          <h5>Hizmetler</h5>
+          <a href="#hizmetler">Sosyal Medya Yönetimi</a>
+          <a href="#hizmetler">İçerik Üretimi</a>
+          <a href="#hizmetler">Reklam & Medya</a>
+          <a href="#hizmetler">UGC & Influencer</a>
+          <a href="#">Marka Stratejisi</a>
+          <a href="#">Analytics</a>
+        </div>
+        <div class="footer-col">
+          <h5>Şirket</h5>
+          <a href="#hakkimizda">Hakkımızda</a>
+          <a href="#referanslar-logolar">Referanslar</a>
+          <a href="#">Blog</a>
+          <a href="#">Kariyer</a>
+        </div>
+        <div class="footer-col">
+          <h5>İletişim</h5>
+          <a href="mailto:merhaba@xsociallab.com">merhaba@xsociallab.com</a>
+          <a href="tel:+905001234567">+90 500 000 00 00</a>
+          <a href="#">İstanbul, Türkiye</a>
+          <a href="#iletisim">Toplantı Planla</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>xSocialLab © 2025 — Tüm Hakları Saklıdır.</p>
+        <div class="footer-socials">
+          <a href="#" class="fsoc" title="Instagram">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="#" class="fsoc" title="TikTok">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.31 6.31 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.19 8.19 0 004.79 1.54V6.78a4.85 4.85 0 01-1.02-.09z"/></svg>
+          </a>
+          <a href="#" class="fsoc" title="Facebook">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+          <a href="#" class="fsoc" title="X">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="#" class="fsoc" title="LinkedIn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 10v7M7 7v.01M12 17v-4.5a2.5 2.5 0 015 0V17M12 10v7"/></svg>
+          </a>
+          <a href="#" class="fsoc" title="YouTube">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.54C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('in'), i * 60);
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // Video slider
+    const scroll = document.getElementById('vrefsScroll');
+    document.getElementById('vNext').onclick = () => scroll.scrollBy({ left: 240, behavior: 'smooth' });
+    document.getElementById('vPrev').onclick = () => scroll.scrollBy({ left: -240, behavior: 'smooth' });
+
+    // Sticky nav shadow
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.style.boxShadow = window.scrollY > 10
+        ? '0 2px 20px rgba(0,0,0,0.08)'
+        : '0 1px 12px rgba(0,0,0,0.05)';
+    });
+  </script>
+</body>
+</html>
